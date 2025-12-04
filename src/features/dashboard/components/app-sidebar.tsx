@@ -2,8 +2,7 @@
 
 import * as React from "react"
 import {
-  BookOpen,
-  Bot,
+  FileSearchCorner,
   Command,
   Frame,
   LifeBuoy,
@@ -11,7 +10,12 @@ import {
   PieChart,
   Send,
   Settings2,
-  SquareTerminal,
+  BookMarked,
+  LayoutDashboard,
+  Building2,
+  UserSearch,
+  ClipboardCheck,
+  FileText
 } from "lucide-react"
 
 import { NavMain } from "../../dashboard/components/nav-main"
@@ -36,89 +40,114 @@ const data = {
   },
   navMain: [
     {
-      title: "Playground",
+      title: "Dashboard",
       url: "#",
-      icon: SquareTerminal,
+      icon: LayoutDashboard,
       isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
+
     },
     {
-      title: "Models",
+      title: "Gestion Academica",
       url: "#",
-      icon: Bot,
+      icon: BookMarked,
       items: [
         {
-          title: "Genesis",
+          title: "Estudiantes",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Talleres",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Tutores",
           url: "#",
         },
       ],
     },
     {
-      title: "Documentation",
+      title: "Gestion Institucional",
       url: "#",
-      icon: BookOpen,
+      icon: Building2,
       items: [
         {
-          title: "Introduction",
+          title: "Centros de Trabajo",
           url: "#",
         },
         {
-          title: "Get Started",
+          title: "Plazas",
           url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
+        }
       ],
     },
     {
-      title: "Settings",
+      title: "Roles y Personal",
+      url: "#",
+      icon: UserSearch,
+      items: [
+        {
+          title: "Supervisores",
+          url: "#",
+        },
+        {
+          title: "Administradores",
+          url: "#",
+        }
+      ],
+    },
+    {
+      title: "Documentacion",
+      url: "#",
+      icon: FileSearchCorner,
+      items: [
+        {
+          title: "Documentos",
+          url: "#",
+        },
+        {
+          title: "Subir Documentos",
+          url: "#",
+        }
+      ],
+    },
+    {
+      title: "Evaluaciones",
+      url: "#",
+      icon: ClipboardCheck,
+      items: [
+        {
+          title: "Evaluaciones",
+          url: "#",
+        },
+        {
+          title: "Calificaciones",
+          url: "#",
+        }
+      ],
+    },
+    {
+      title: "Proceso de Pasantias",
       url: "#",
       icon: Settings2,
       items: [
         {
-          title: "General",
+          title: "Gestion de Pasantias",
           url: "#",
         },
         {
-          title: "Team",
+          title: "Cierre de Pasantias",
           url: "#",
         },
         {
-          title: "Billing",
+          title: "Enviar Excusas",
           url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
+        }
       ],
+    },
+    {
+      title: "Reportes",
+      url: "#",
+      icon: FileText,
     },
   ],
   navSecondary: [
@@ -132,24 +161,7 @@ const data = {
       url: "#",
       icon: Send,
     },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+  ]
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -174,7 +186,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
