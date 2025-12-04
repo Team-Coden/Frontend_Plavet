@@ -1,5 +1,4 @@
-// DashboardLayout.jsx
-import "./index.css"
+
 import { AppSidebar } from "@/features/dashboard/components/app-sidebar"
 import {
   Breadcrumb,
@@ -16,9 +15,7 @@ import {
   SidebarTrigger,
 } from "@/features/dashboard/components/ui/sidebar"
 
-import type { ReactNode } from "react";
-
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default function Main({ children }: { children?: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -46,10 +43,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <main className="p-6 md:p-10">
           {children}
-        </div>
+        </main>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

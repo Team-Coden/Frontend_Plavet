@@ -1,19 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import DashboardLayout from "./layout"
+import RoutersProtected from "./App/router/routers"
 
-
-
-function App() {
+export default function App() {
   return (
-    <BrowserRouter>
-      <DashboardLayout>
-        <Routes>
-          <Route path="/" element={<div>Home</div>} />
-         
-        </Routes>
-      </DashboardLayout>
-    </BrowserRouter>
+    <>
+      <RoutersProtected/>
+      
+    </>
   )
 }
-
-export default App
