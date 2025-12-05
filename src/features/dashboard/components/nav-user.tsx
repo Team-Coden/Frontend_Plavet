@@ -92,7 +92,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <LogOut />
-              Log out
+              <a href="/login">Log out</a>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

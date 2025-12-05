@@ -19,7 +19,6 @@ import {
 } from "lucide-react"
 
 import { NavMain } from "../../dashboard/components/nav-main"
-import { NavProjects } from "../../dashboard/components/nav-projects"
 import { NavSecondary } from "../../dashboard/components/nav-secondary"
 import { NavUser } from "../../dashboard/components/nav-user"
 import {
@@ -41,7 +40,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: LayoutDashboard,
       isActive: true,
 
@@ -77,7 +76,11 @@ const data = {
         {
           title: "Plazas",
           url: "#",
-        }
+        },
+        {
+          title: "Tutores",
+          url: "#",
+        },
       ],
     },
     {
@@ -90,7 +93,7 @@ const data = {
           url: "#",
         },
         {
-          title: "Administradores",
+          title: "Vinculadores",
           url: "#",
         }
       ],
