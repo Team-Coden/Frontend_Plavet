@@ -132,7 +132,7 @@ const data = {
       items: [
         {
           title: "Gestion de Pasantias",
-          url: "#",
+          url: "/gestionDePasantias",
         },
         {
           title: "Cierre de Pasantias",

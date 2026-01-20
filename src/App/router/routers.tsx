@@ -13,6 +13,7 @@ import CalificacionesPage from '@/features/evaluaciones/calificacion/page';
 import ReportesPage from '@/features/reportes/page';
 import CierrePasantiasPage from '@/features/procesoDePasantias/cierreDePasantias/page';
 import ExcusasPage from '@/features/procesoDePasantias/excusas/page';
+import GestionPasantiasPage from '@/features/procesoDePasantias/gestionDePasantias/page';
 
 
 function RoutersProtected() {
@@ -31,6 +32,7 @@ function RoutersProtected() {
         <Route path="/evaluaciones" element={<EvaluacionesPage/>} />
         <Route path="/calificaciones" element={<CalificacionesPage/>} />
         <Route path="/reportes" element={<ReportesPage/>} />
+        <Route path="/gestionDePasantias" element={<GestionPasantiasPage/>} />
         <Route path="/cierrePasantias" element={<CierrePasantiasPage/>} />
         <Route path="/excusas" element={<ExcusasPage/>} />
 

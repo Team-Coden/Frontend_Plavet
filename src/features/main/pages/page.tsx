@@ -62,9 +62,13 @@ export default function Main({ children }: { children?: React.ReactNode }) {
             </Breadcrumb>
 
             <div className="grow" />
-            <ModeToggle />
+          
+           
           </div>
         </header>
+        <div className="absolute top-4 right-4">
+        <ModeToggle/>
+        </div>
 
         <main className="p-6 md:p-10">
           {children}
