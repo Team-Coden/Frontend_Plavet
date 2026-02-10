@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, Fragment } from "react"
 import { Card, CardContent } from "../../../../shared/components/ui/card"
 import { Button } from "../../../../shared/components/ui/button"
 import { Input } from "../../../../shared/components/ui/input"
@@ -26,11 +26,11 @@ import {
 } from "../../../../shared/components/ui/dropdown-menu"
 import { Label } from "../../../../shared/components/ui/label"
 import { Textarea } from "../../../../shared/components/ui/textarea"
+import Main from '../../../main/pages/page';
 import {
   UserCircle,
   Search,
   MoreVertical,
-  Eye,
   Edit,
   Trash2,
   FileDown,
@@ -45,8 +45,11 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
+  ChevronDown,
+  ChevronRight,
+  Building2,
+  Award,
 } from "lucide-react"
-import Main from "@/features/main/pages/page"
 
 interface Tutor {
   id: string
@@ -117,13 +120,23 @@ const initialTutores: Tutor[] = [
 ]
 
 export default function TutoresPage() {
- 
   const [tutores, setTutores] = useState<Tutor[]>(initialTutores)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterEstado, setFilterEstado] = useState<string>("all")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [selectedTutor, setSelectedTutor] = useState<Tutor | null>(null)
+  const [selectedTutor, ] = useState<Tutor | null>(null)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
+
+  const toggleRow = (id: string) => {
+    const newExpanded = new Set(expandedRows)
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id)
+    } else {
+      newExpanded.add(id)
+    }
+    setExpandedRows(newExpanded)
+  }
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -195,10 +208,6 @@ export default function TutoresPage() {
     }
   }
 
-  const handleView = (tutor: Tutor) => {
-    setSelectedTutor(tutor)
-    setIsViewDialogOpen(true)
-  }
 
   const getEstadoBadge = (estado: string) => {
     switch (estado) {
@@ -211,6 +220,7 @@ export default function TutoresPage() {
         )
       case "Pendiente":
         return (
+          
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
             <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             <span className="text-sm font-medium text-amber-700 dark:text-amber-300">{estado}</span>
@@ -373,137 +383,185 @@ export default function TutoresPage() {
           </CardContent>
         </Card>
 
-        {/* Tutores Display */}
-        {filteredTutores.length === 0 ? (
-          <Card>
-            <CardContent className="py-16">
-              <div className="flex flex-col items-center justify-center text-center">
-                <div className="p-4 rounded-full bg-muted mb-4">
-                  <Search className="h-12 w-12 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">No se encontraron tutores</h3>
-                <p className="text-sm text-muted-foreground">Intenta ajustar los filtros o registra un nuevo tutor</p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {filteredTutores.map((tutor) => (
-              <Card key={tutor.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 space-y-4">
-                      {/* Header with name and actions */}
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-4">
-                          <div className="p-3 rounded-full bg-primary/10 border border-primary/20">
-                            <UserCircle className="h-8 w-8 text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-semibold text-foreground mb-1">
-                              {tutor.nombre} {tutor.apellido}
-                            </h3>
-                            <div className="flex items-center gap-3 text-sm text-muted-foreground mb-2">
-                              <span className="flex items-center gap-1">
-                                <Briefcase className="h-4 w-4" />
-                                {tutor.especialidad}
-                              </span>
-                              <span>•</span>
-                              <span>{tutor.empresa}</span>
-                            </div>
-                            {renderStars(tutor.calificacion)}
-                          </div>
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleView(tutor)}>
-                              <Eye className="h-4 w-4 mr-2" />
-                              Ver Detalles
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Editar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(tutor.id)}>
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Eliminar
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-
-                      {/* Info Grid */}
-                      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 pt-3 border-t border-border">
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-1">Estado</p>
-                          {getEstadoBadge(tutor.estado)}
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-1">Experiencia</p>
-                          <p className="text-sm font-medium text-foreground flex items-center gap-2">
-                            <Briefcase className="h-3 w-3" />
-                            {tutor.experiencia} años
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-1">Estudiantes</p>
-                          <p className="text-sm font-medium text-foreground flex items-center gap-2">
-                            <Users className="h-3 w-3" />
-                            {tutor.estudiantesAsignados} asignados
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-1">Ubicación</p>
-                          <p className="text-sm font-medium text-foreground flex items-center gap-2">
-                            <MapPin className="h-3 w-3" />
-                            {tutor.ubicacion}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground mb-1">Fecha de Registro</p>
-                          <p className="text-sm font-medium text-foreground flex items-center gap-2">
-                            <Calendar className="h-3 w-3" />
-                            {tutor.fechaRegistro}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Contact Info */}
-                      <div className="flex flex-wrap gap-4 pt-2 text-sm">
-                        <span className="flex items-center gap-2 text-muted-foreground">
-                          <Mail className="h-4 w-4" />
-                          {tutor.email}
-                        </span>
-                        <span className="flex items-center gap-2 text-muted-foreground">
-                          <Phone className="h-4 w-4" />
-                          {tutor.telefono}
-                        </span>
-                      </div>
-
-                      {/* Certifications */}
-                      {tutor.certificaciones.length > 0 && (
-                        <div className="flex flex-wrap gap-2 pt-2">
-                          {tutor.certificaciones.map((cert, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {cert}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+        {/* Tutores Table with Expandable Rows */}
+        <Card>
+          <CardContent className="p-0">
+            {filteredTutores.length === 0 ? (
+              <div className="py-16">
+                <div className="flex flex-col items-center justify-center text-center">
+                  <div className="p-4 rounded-full bg-muted mb-4">
+                    <Search className="h-12 w-12 text-muted-foreground" />
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+                  <h3 className="text-lg font-semibold text-foreground mb-2">No se encontraron tutores</h3>
+                  <p className="text-sm text-muted-foreground">Intenta ajustar los filtros o registra un nuevo tutor</p>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/50">
+                      <th className="w-12 p-4"></th>
+                      <th className="text-left p-4 font-medium text-muted-foreground text-sm">Tutor</th>
+                      <th className="text-left p-4 font-medium text-muted-foreground text-sm">Empresa</th>
+                      <th className="text-center p-4 font-medium text-muted-foreground text-sm">Estudiantes</th>
+                      <th className="text-center p-4 font-medium text-muted-foreground text-sm">Estado</th>
+                      <th className="text-center p-4 font-medium text-muted-foreground text-sm">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredTutores.map((tutor) => (
+                      <Fragment key={tutor.id}>
+                        {/* Main Row */}
+                        <tr 
+                          className={`border-b border-border hover:bg-muted/30 transition-colors cursor-pointer ${expandedRows.has(tutor.id) ? 'bg-muted/20' : ''}`}
+                          onClick={() => toggleRow(tutor.id)}
+                        >
+                          <td className="p-4">
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              {expandedRows.has(tutor.id) ? (
+                                <ChevronDown className="h-4 w-4 text-primary" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                              )}
+                            </Button>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-full bg-primary/10 border border-primary/20">
+                                <UserCircle className="h-5 w-5 text-primary" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-foreground">{tutor.nombre} {tutor.apellido}</p>
+                                <p className="text-xs text-muted-foreground">{tutor.id}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4">
+                            <span className="text-sm text-foreground">{tutor.empresa}</span>
+                          </td>
+                          <td className="p-4 text-center">
+                            <span className="text-sm font-medium text-foreground">{tutor.estudiantesAsignados}</span>
+                          </td>
+                          <td className="p-4">
+                            <div className="flex justify-center">{getEstadoBadge(tutor.estado)}</div>
+                          </td>
+                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex justify-center">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  
+                                  <DropdownMenuItem>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Editar
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(tutor.id)}>
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Eliminar
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          </td>
+                        </tr>
+                        
+                        {/* Expanded Row */}
+                        {expandedRows.has(tutor.id) && (
+                          <tr className="bg-muted/10 border-b border-border">
+                            <td colSpan={6} className="p-0">
+                              <div className="px-6 py-4 ml-12">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                  {/* Especialidad */}
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                      <Briefcase className="h-4 w-4" />
+                                      <span className="text-xs font-medium uppercase tracking-wide">Especialidad</span>
+                                    </div>
+                                    <p className="text-sm font-medium text-foreground">{tutor.especialidad}</p>
+                                  </div>
+                                  
+                                  {/* Contacto */}
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                      <Mail className="h-4 w-4" />
+                                      <span className="text-xs font-medium uppercase tracking-wide">Contacto</span>
+                                    </div>
+                                    <p className="text-sm text-foreground">{tutor.email}</p>
+                                    <p className="text-sm text-muted-foreground flex items-center gap-2">
+                                      <Phone className="h-3 w-3" />
+                                      {tutor.telefono}
+                                    </p>
+                                  </div>
+                                  
+                                  {/* Experiencia y Ubicacion */}
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                      <Building2 className="h-4 w-4" />
+                                      <span className="text-xs font-medium uppercase tracking-wide">Informacion</span>
+                                    </div>
+                                    <p className="text-sm text-foreground">{tutor.experiencia} años de experiencia</p>
+                                    <p className="text-sm text-muted-foreground flex items-center gap-2">
+                                      <MapPin className="h-3 w-3" />
+                                      {tutor.ubicacion}
+                                    </p>
+                                  </div>
+                                  
+                                  {/* Calificacion */}
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                      <Star className="h-4 w-4" />
+                                      <span className="text-xs font-medium uppercase tracking-wide">Calificacion</span>
+                                    </div>
+                                    <div>{renderStars(tutor.calificacion)}</div>
+                                  </div>
+                                </div>
+                                
+                                {/* Certificaciones */}
+                                {tutor.certificaciones.length > 0 && (
+                                  <div className="mt-4 pt-4 border-t border-border">
+                                    <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                                      <Award className="h-4 w-4" />
+                                      <span className="text-xs font-medium uppercase tracking-wide">Certificaciones</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                      {tutor.certificaciones.map((cert, index) => (
+                                        <Badge key={index} variant="secondary" className="text-xs">
+                                          {cert}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                
+                                {/* Fecha de Registro */}
+                                <div className="mt-4 pt-4 border-t border-border flex items-center gap-2 text-muted-foreground">
+                                  <Calendar className="h-4 w-4" />
+                                  <span className="text-xs">Registrado el {tutor.fechaRegistro}</span>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Results Count */}
+        <div className="mt-4 text-sm text-muted-foreground text-center">
+          Mostrando {filteredTutores.length} de {tutores.length} tutores
+        </div>
       </div>
 
       {/* Register Dialog */}
@@ -766,7 +824,8 @@ export default function TutoresPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+     
     </div>
-    </Main>
+     </Main>
   )
 }
