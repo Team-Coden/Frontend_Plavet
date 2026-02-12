@@ -9,7 +9,6 @@ import {
   Plus,
   ChevronLeft,
   ChevronRight,
-  UserPlus,
 } from "lucide-react";
 import { Button } from "../../../../shared/components/ui/button";
 import { Card, CardHeader, CardContent } from "../../../../shared/components/ui/card";
@@ -37,6 +36,7 @@ import {
   ViewPasantiaDialog,
   DeletePasantiaDialog,
 } from "../components/PasantiaDialogs";
+import { EditPasantiaDialog } from "../components/EditPasantiaDialog";
 import type { Pasantia, CreatePasantiaData } from "../types";
 import Main from "@/features/main/pages/page";
 
@@ -116,6 +116,7 @@ export default function GestionPasantiasPage() {
     filterEstado,
     setFilterEstado,
     addPasantia,
+    updatePasantia,
     deletePasantia,
     updateEstado,
   } = usePasantias(initialData);
@@ -124,6 +125,7 @@ export default function GestionPasantiasPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedPasantia, setSelectedPasantia] = useState<Pasantia | null>(null);
 
   // Handlers
@@ -137,8 +139,8 @@ export default function GestionPasantiasPage() {
   };
 
   const handleEditPasantia = (pasantia: Pasantia) => {
-    // TODO: Implement edit dialog
-    console.log("Edit pasantia:", pasantia);
+    setSelectedPasantia(pasantia);
+    setIsEditDialogOpen(true);
   };
 
   const handleDeletePasantia = (id: string) => {
@@ -149,6 +151,11 @@ export default function GestionPasantiasPage() {
 
   const handleUpdateEstado = (id: string, estado: Pasantia["estado"]) => {
     updateEstado(id, estado);
+  };
+
+
+  const handleUpdatePasantia = (data: Partial<Pasantia>) => {
+    updatePasantia(data as Pasantia);
   };
 
   const handleExport = () => {
@@ -201,14 +208,6 @@ export default function GestionPasantiasPage() {
                   >
                     <Download className="h-4 w-4" />
                     Exportar
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="gap-2"
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    Asignar Estudiante
                   </Button>
                   <Button 
                     size="sm"
@@ -354,6 +353,14 @@ export default function GestionPasantiasPage() {
             onOpenChange={setIsDeleteDialogOpen}
             onConfirm={handleDeletePasantia}
             pasantia={selectedPasantia}
+          />
+
+
+          <EditPasantiaDialog
+            open={isEditDialogOpen}
+            onOpenChange={setIsEditDialogOpen}
+            pasantia={selectedPasantia}
+            onUpdate={handleUpdatePasantia}
           />
         </div>
       </div>

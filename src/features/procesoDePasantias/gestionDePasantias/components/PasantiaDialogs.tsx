@@ -68,6 +68,32 @@ export const CreatePasantiaDialog = ({
   const [centroSearch, setCentroSearch] = useState("");
   const [tutorSearch, setTutorSearch] = useState("");
 
+  const resetForm = () => {
+    setFormData({
+      estudiante: "",
+      matricula: "",
+      taller: "" as "Taller de Software" | "Gestion" | "Automotriz" | "Electricidad",
+      centroTrabajo: "" as "TechCorp Solutions" | "Consultores RD" | "AutoService Center" | "DataSoft Inc" | "ElectroTec",
+      tutor: "" as "Ing. Maria Garcia" | "Lic. Carlos Mendez" | "Tec. Roberto Diaz" | "Ing. Pedro Almonte",
+      fechaInicio: "",
+      fechaFin: "",
+      horasRequeridas: 480,
+      observaciones: "",
+      estado: "pendiente",
+    });
+    setEstudianteSearch("");
+    setTallerSearch("");
+    setCentroSearch("");
+    setTutorSearch("");
+  };
+
+  // Reset form when dialog opens
+  React.useEffect(() => {
+    if (open) {
+      resetForm();
+    }
+  }, [open]);
+
   const filteredEstudiantes = ESTUDIANTES.filter(est => 
     est.nombre.toLowerCase().includes(estudianteSearch.toLowerCase()) ||
     est.matricula.includes(estudianteSearch)
@@ -87,25 +113,6 @@ export const CreatePasantiaDialog = ({
     onSubmit(formData);
     onOpenChange(false);
     resetForm();
-  };
-
-  const resetForm = () => {
-    setFormData({
-      estudiante: "",
-      matricula: "",
-      taller: "Taller de Software",
-      centroTrabajo: "TechCorp Solutions",
-      tutor: "Ing. Maria Garcia",
-      fechaInicio: "",
-      fechaFin: "",
-      horasRequeridas: 480,
-      observaciones: "",
-      estado: "pendiente",
-    });
-    setEstudianteSearch("");
-    setTallerSearch("");
-    setCentroSearch("");
-    setTutorSearch("");
   };
 
   return (

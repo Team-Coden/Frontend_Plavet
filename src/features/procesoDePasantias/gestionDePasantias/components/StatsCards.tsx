@@ -1,12 +1,12 @@
 "use client";
 
 import { Card, CardContent } from "../../../../shared/components/ui/card";
-import { Briefcase, CheckCircle, GraduationCap, Clock } from "lucide-react";
+import { Briefcase, CheckCircle, GraduationCap, Clock, XCircle } from "lucide-react";
 import type { PasantiaStats } from "../types";
 
 export const StatsCards = ({ stats }: { stats: PasantiaStats }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
       {/* Total */}
       <Card className="border bg-card hover:shadow-md transition-shadow">
         <CardContent className="p-5">
@@ -62,6 +62,21 @@ export const StatsCards = ({ stats }: { stats: PasantiaStats }) => {
             </div>
             <div className="p-3 rounded-full bg-amber-100">
               <Clock className="h-5 w-5 text-amber-600" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Suspendidas */}
+      <Card className="border bg-card hover:shadow-md transition-shadow">
+        <CardContent className="p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Suspendidas</p>
+              <p className="text-2xl font-bold text-red-600 mt-1">{stats.suspendidas}</p>
+            </div>
+            <div className="p-3 rounded-full bg-red-100">
+              <XCircle className="h-5 w-5 text-red-600" />
             </div>
           </div>
         </CardContent>
