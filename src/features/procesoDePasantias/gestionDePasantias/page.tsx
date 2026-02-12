@@ -154,6 +154,17 @@ export default function GestionPasantiasPage() {
   const [, setIsEditDialogOpen] = useState(false)
   const [isAsignarDialogOpen, setIsAsignarDialogOpen] = useState(false)
   const [selectedPasantia, setSelectedPasantia] = useState<Pasantia | null>(null)
+  const [asignarSearch, setAsignarSearch] = useState("")
+  const [centroSearch, setCentroSearch] = useState("")
+  const [plazaSearch, setPlazaSearch] = useState("")
+
+  const filteredEstudiantes = estudiantes.filter(est => 
+    est.nombre.toLowerCase().includes(asignarSearch.toLowerCase()) ||
+    est.matricula.includes(asignarSearch)
+  )
+  const filteredCentros = centros.filter(centro => 
+    centro.toLowerCase().includes(centroSearch.toLowerCase())
+  )
 
   const [newPasantia, setNewPasantia] = useState({
     estudiante: "",
@@ -747,44 +758,101 @@ export default function GestionPasantiasPage() {
                 <div className="space-y-4 py-4">
                   <div className="space-y-2">
                     <Label>Seleccionar Estudiante</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Buscar estudiante..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {estudiantes.map(est => (
-                          <SelectItem key={est.matricula} value={est.matricula}>
-                            {est.nombre} - {est.matricula}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Buscar estudiante por nombre o matrícula..."
+                        value={asignarSearch}
+                        onChange={(e) => setAsignarSearch(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    {asignarSearch && (
+                      <div className="border rounded-md max-h-32 overflow-y-auto">
+                        {filteredEstudiantes.length > 0 ? (
+                          filteredEstudiantes.map(est => (
+                            <div
+                              key={est.matricula}
+                              className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                              onClick={() => {
+                                console.log("Estudiante seleccionado:", est)
+                                setAsignarSearch("")
+                              }}
+                            >
+                              {est.nombre} - {est.matricula}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="px-3 py-2 text-sm text-muted-foreground">
+                            No se encontraron estudiantes
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>Seleccionar Centro de Trabajo</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar centro..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {centros.map(centro => (
-                          <SelectItem key={centro} value={centro}>{centro}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Buscar centro de trabajo..."
+                        value={centroSearch}
+                        onChange={(e) => setCentroSearch(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    {centroSearch && (
+                      <div className="border rounded-md max-h-32 overflow-y-auto">
+                        {filteredCentros.length > 0 ? (
+                          filteredCentros.map(centro => (
+                            <div
+                              key={centro}
+                              className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                              onClick={() => {
+                                console.log("Centro seleccionado:", centro)
+                                setCentroSearch("")
+                              }}
+                            >
+                              {centro}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="px-3 py-2 text-sm text-muted-foreground">
+                            No se encontraron centros
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>Seleccionar Plaza</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar plaza disponible..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="plaza1">Desarrollador Junior - TechCorp</SelectItem>
-                        <SelectItem value="plaza2">Asistente Administrativo - Consultores RD</SelectItem>
-                        <SelectItem value="plaza3">Tecnico Automotriz - AutoService</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Buscar plaza disponible..."
+                        value={plazaSearch}
+                        onChange={(e) => setPlazaSearch(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    {plazaSearch && (
+                      <div className="border rounded-md max-h-32 overflow-y-auto">
+                        {["Desarrollador Junior - TechCorp", "Asistente Administrativo - Consultores RD", "Tecnico Automotriz - AutoService"]
+                          .filter(plaza => plaza.toLowerCase().includes(plazaSearch.toLowerCase()))
+                          .map((plaza, index) => (
+                            <div
+                              key={index}
+                              className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                              onClick={() => {
+                                console.log("Plaza seleccionada:", plaza)
+                                setPlazaSearch("")
+                              }}
+                            >
+                              {plaza}
+                            </div>
+                          ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <DialogFooter>
