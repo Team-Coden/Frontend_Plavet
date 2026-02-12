@@ -36,15 +36,9 @@ import {
   TableRow,
 } from "../../../shared/components/ui/table"
 import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "../../../shared/components/ui/tabs"
-import {
   Briefcase,
   Search,
   Plus,
-  Filter,
   MoreHorizontal,
   Eye,
   Edit,
@@ -59,6 +53,7 @@ import {
   Download,
   UserPlus,
   GraduationCap,
+  Filter,
 } from "lucide-react"
 
 import { Suspense } from "react"
@@ -153,14 +148,12 @@ const estudiantes = [
 export default function GestionPasantiasPage() {
   const [pasantias, setPasantias] = useState<Pasantia[]>(pasantiasIniciales)
   const [searchTerm, setSearchTerm] = useState("")
-  const [filterTaller, setFilterTaller] = useState("Todos")
   const [filterEstado, setFilterEstado] = useState("todos")
   const [isNewDialogOpen, setIsNewDialogOpen] = useState(false)
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [, setIsEditDialogOpen] = useState(false)
   const [isAsignarDialogOpen, setIsAsignarDialogOpen] = useState(false)
   const [selectedPasantia, setSelectedPasantia] = useState<Pasantia | null>(null)
-  const [activeTab, setActiveTab] = useState("todas")
 
   const [newPasantia, setNewPasantia] = useState({
     estudiante: "",
@@ -177,14 +170,10 @@ export default function GestionPasantiasPage() {
   const filteredPasantias = pasantias.filter(p => {
     const matchesSearch = p.estudiante.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.matricula.includes(searchTerm) ||
+      p.taller.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.centroTrabajo.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesTaller = filterTaller === "Todos" || p.taller === filterTaller
     const matchesEstado = filterEstado === "todos" || p.estado === filterEstado
-    const matchesTab = activeTab === "todas" || 
-      (activeTab === "activas" && p.estado === "activa") ||
-      (activeTab === "completadas" && p.estado === "completada") ||
-      (activeTab === "pendientes" && p.estado === "pendiente")
-    return matchesSearch && matchesTaller && matchesEstado && matchesTab
+    return matchesSearch && matchesEstado
   })
 
   const stats = {
@@ -360,22 +349,6 @@ export default function GestionPasantiasPage() {
             <Card className="border">
               <CardHeader className="border-b bg-muted/30">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                  <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full lg:w-auto">
-                    <TabsList className="bg-muted">
-                      <TabsTrigger value="todas" className="data-[state=active]:bg-background">
-                        Todas
-                      </TabsTrigger>
-                      <TabsTrigger value="activas" className="data-[state=active]:bg-background">
-                        Activas
-                      </TabsTrigger>
-                      <TabsTrigger value="completadas" className="data-[state=active]:bg-background">
-                        Completadas
-                      </TabsTrigger>
-                      <TabsTrigger value="pendientes" className="data-[state=active]:bg-background">
-                        Pendientes
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
                   <div className="flex items-center gap-2">
                     <Button 
                       variant="outline" 
@@ -408,29 +381,19 @@ export default function GestionPasantiasPage() {
               </CardHeader>
               <CardContent className="p-6">
                 {/* Search and Filters */}
-                <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <div className="flex flex-col md:flex-row gap-4">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="Buscar por estudiante, matricula o centro..."
+                      placeholder="Buscar por estudiante, matrícula, taller o centro..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
                     />
                   </div>
-                  <Select value={filterTaller} onValueChange={setFilterTaller}>
-                    <SelectTrigger className="w-full md:w-48">
-                      <Filter className="h-4 w-4 mr-2" />
-                      <SelectValue placeholder="Filtrar por taller" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {talleres.map(taller => (
-                        <SelectItem key={taller} value={taller}>{taller}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                   <Select value={filterEstado} onValueChange={setFilterEstado}>
                     <SelectTrigger className="w-full md:w-48">
+                      <Filter className="h-4 w-4 mr-2" />
                       <SelectValue placeholder="Filtrar por estado" />
                     </SelectTrigger>
                     <SelectContent>
