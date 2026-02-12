@@ -9,9 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../../shared/components/ui/select";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Search } from "lucide-react";
 import type { Plaza, Genero, EstadoPlaza } from "../types";
 import { TALLERES } from "../types";
+import { useState } from "react";
 
 interface PlazaFormProps {
   formData: Partial<Plaza>;
@@ -24,46 +25,69 @@ export const PlazaForm = ({
   onChange,
   isEditing = false,
 }: PlazaFormProps) => {
+  const [tallerSearch, setTallerSearch] = useState("");
+
+  const filteredTalleres = TALLERES.filter((taller) =>
+    taller.toLowerCase().includes(tallerSearch.toLowerCase())
+  );
+
   return (
     <div className="space-y-4 py-4">
-      {/* Centro de Trabajo */}
+      {/* Centro de Trabajo - Ahora es buscador */}
       <div className="space-y-2">
-        <Label>Centro de Trabajo</Label>
-        <Select
-          value={formData.centro}
-          onValueChange={(v) => onChange({ ...formData, centro: v })}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Selecciona un centro" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Centro Norte">Centro Norte</SelectItem>
-            <SelectItem value="Taller Central">Taller Central</SelectItem>
-            <SelectItem value="Planta 1">Planta 1</SelectItem>
-          </SelectContent>
-        </Select>
+        <Label htmlFor="centro">Centro de Trabajo</Label>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="centro"
+            className="pl-10"
+            value={formData.centro || ""}
+            onChange={(e) => onChange({ ...formData, centro: e.target.value })}
+            placeholder="Buscar centro de trabajo..."
+          />
+        </div>
       </div>
 
-      {/* Taller (NUEVO) */}
+      {/* Taller - Ahora es buscador con selección */}
       <div className="space-y-2">
-        <Label>Taller / Plaza</Label>
-        <Select
-          value={formData.taller}
-          onValueChange={(v) =>
-            onChange({ ...formData, taller: v as Plaza["taller"] })
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Selecciona un taller" />
-          </SelectTrigger>
-          <SelectContent>
-            {TALLERES.map((taller) => (
-              <SelectItem key={taller} value={taller}>
-                {taller}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Label htmlFor="taller">Taller</Label>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="taller"
+            className="pl-10"
+            value={tallerSearch}
+            onChange={(e) => setTallerSearch(e.target.value)}
+            placeholder="Buscar taller por nombre..."
+          />
+        </div>
+        {tallerSearch && (
+          <div className="border rounded-md max-h-32 overflow-y-auto">
+            {filteredTalleres.length > 0 ? (
+              filteredTalleres.map((taller) => (
+                <div
+                  key={taller}
+                  className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
+                  onClick={() => {
+                    onChange({ ...formData, taller });
+                    setTallerSearch(taller);
+                  }}
+                >
+                  {taller}
+                </div>
+              ))
+            ) : (
+              <div className="px-3 py-2 text-sm text-muted-foreground">
+                No se encontraron talleres
+              </div>
+            )}
+          </div>
+        )}
+        {formData.taller && !tallerSearch && (
+          <div className="text-sm text-muted-foreground">
+            Seleccionado: <span className="font-medium">{formData.taller}</span>
+          </div>
+        )}
       </div>
 
       {/* Nombre de Plaza */}
@@ -82,7 +106,7 @@ export const PlazaForm = ({
       </div>
 
       {/* Genero y Descripcion */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <div className="space-y-2">
           <Label>Genero</Label>
           <Select
@@ -103,9 +127,11 @@ export const PlazaForm = ({
         </div>
 
         <div className="space-y-2">
-          <Label>Descripcion (opcional)</Label>
-          <Input
-            placeholder="Describe las caracteristicas"
+          <Label htmlFor="descripcion">Descripción (opcional)</Label>
+          <textarea
+            id="descripcion"
+            className="w-full min-h-[120px] p-3 border rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+            placeholder="Describe las características y responsabilidades de la plaza..."
             value={formData.descripcion || ""}
             onChange={(e) =>
               onChange({ ...formData, descripcion: e.target.value })
