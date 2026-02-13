@@ -6,7 +6,7 @@ import CentroDeTrabajoPage from '@/features/gestionInstitucional/centroDeTrabajo
 import InicioPage from '@/features/inicio/pages/page';
 import PlazasPage from '@/features/gestionInstitucional/plazas/pages/page';
 import TutoresPage from '@/features/gestionInstitucional/tutores/pages/page';
-import DocumentosPage from '@/features/documentacion/page';
+import DocumentosPage from '@/features/documentacion/pages/page';
 import SubirDocumentosPage from '@/features/documentacion/subir/page';
 import EvaluacionesPage from '@/features/evaluaciones/evaluacion/page';
 import CalificacionesPage from '@/features/evaluaciones/calificacion/page';
