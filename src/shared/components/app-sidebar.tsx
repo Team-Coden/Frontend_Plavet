@@ -87,7 +87,7 @@ const data = {
       items: [
         {
           title: "Supervisores",
-          url: "#",
+          url: "/supervisores",
         },
         {
           title: "Vinculadores",

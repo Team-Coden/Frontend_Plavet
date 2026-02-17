@@ -14,6 +14,7 @@ import ReportesPage from '@/features/reportes/page';
 import CierrePasantiasPage from '@/features/procesoDePasantias/cierreDePasantias/pages/page';
 import ExcusasPage from '@/features/procesoDePasantias/excusas/pages/page';
 import GestionPasantiasPage from '@/features/procesoDePasantias/gestionDePasantias/pages/page';
+import SupervisoresPage from '@/features/rolesYpersonal/supervisores/pages/page';
 
 
 function RoutersProtected() {
@@ -35,6 +36,7 @@ function RoutersProtected() {
         <Route path="/gestionDePasantias" element={<GestionPasantiasPage/>} />
         <Route path="/cierrePasantias" element={<CierrePasantiasPage/>} />
         <Route path="/excusas" element={<ExcusasPage/>} />
+        <Route path="/supervisores" element={<SupervisoresPage/>} />
 
       </Routes>
     </BrowserRouter>
