@@ -107,7 +107,20 @@ export default function ReportesPage() {
             })}
           </div>
 
-          {/* Info Card (Omitido por brevedad, se mantiene igual) */}
+          {/* Info Card */}
+          <Card className="bg-linear-to-r from-blue-50 to-indigo-50 border-blue-200">
+            <CardHeader>
+              <CardTitle className="text-blue-900">¿Cómo generar reportes?</CardTitle>
+            </CardHeader>
+            <CardContent className="text-blue-800">
+              <ol className="list-decimal list-inside space-y-2">
+                <li>Selecciona el tipo de reporte que deseas generar</li>
+                <li>Configura los filtros según tus necesidades (taller, período, formato)</li>
+                <li>Previsualiza el reporte para verificar los datos</li>
+                <li>Descarga el reporte en formato PDF</li>
+              </ol>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
