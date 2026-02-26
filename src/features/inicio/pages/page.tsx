@@ -22,12 +22,28 @@ User,
 LogOut,
 LogIn,
 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { ModeToggle } from "../../main/components/mode-toggle"
 
 
 export default function InicioPage() {
   const [authenticated, setAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  // Verificar si viene del login (simulando sesión activa)
+  useEffect(() => {
+    const fromLogin = sessionStorage.getItem('isLoggedIn');
+    if (fromLogin === 'true') {
+      setAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    setAuthenticated(false);
+    sessionStorage.removeItem('isLoggedIn');
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,13 +64,13 @@ export default function InicioPage() {
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium">Usuario</span>
               </div>
-              <Button variant="outline" size="sm" onClick={() => setAuthenticated(false)}>
+              <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Cerrar Sesión
               </Button>
             </div>
           ) : (
-            <Button variant="outline" size="sm" onClick={() => setAuthenticated(true)}>
+            <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
               <LogIn className="h-4 w-4 mr-2" />
               Iniciar Sesión
             </Button>
