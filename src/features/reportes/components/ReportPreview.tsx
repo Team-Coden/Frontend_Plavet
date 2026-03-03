@@ -4,10 +4,10 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../shared/components/ui/card"
 import { Button } from "../../../shared/components/ui/button"
-import { Download, Eye, BarChart3, PieChart, Users, FileText, Star, Building2, FolderOpen } from "lucide-react"
+import { Download, Eye, BarChart3, PieChart, FileText } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../shared/components/ui/select"
 import { 
   BarChart, 
@@ -23,7 +23,8 @@ import {
   Legend
 } from "recharts"
 import jsPDF from "jspdf"
-import html2canvas from "html2canvas"
+import domtoimage from "dom-to-image"
+import { ReporteService } from "../service/reporteService"
 
 interface ReportPreviewProps {
   reportType: string
@@ -33,6 +34,31 @@ interface ReportPreviewProps {
     formato: string
   }
   onClose: () => void
+}
+
+interface ChartDataPoint {
+  name: string
+  [key: string]: string | number
+}
+
+interface PieDataPoint {
+  name: string
+  value: number
+  color: string
+  [key: string]: string | number
+}
+
+interface TableDataPoint {
+  [key: string]: string | number
+}
+
+interface ReportData {
+  title: string
+  icon?: string
+  summary: Record<string, number | string>
+  chartData: ChartDataPoint[]
+  pieData: PieDataPoint[]
+  tableData?: TableDataPoint[]
 }
 
 // Lista de talleres disponibles
@@ -45,145 +71,41 @@ const talleresDisponibles = [
   { id: "cloud", nombre: "Cloud Computing" },
 ]
 
-// Datos de ejemplo para los reportes
-const getMockData = (reportType: string) => {
-  switch (reportType) {
-    case "estudiantes-pasantias":
-      return {
-        title: "Reporte de Estudiantes y Pasantías",
-        icon: Users,
-        summary: {
-          totalEstudiantes: 45,
-          pasantiasActivas: 32,
-          pasantiasCompletadas: 28,
-          empresasParticipantes: 15
-        },
-        chartData: [
-          { name: "Enero", estudiantes: 12, pasantias: 8 },
-          { name: "Febrero", estudiantes: 15, pasantias: 10 },
-          { name: "Marzo", estudiantes: 18, pasantias: 14 },
-          { name: "Abril", estudiantes: 22, pasantias: 18 },
-          { name: "Mayo", estudiantes: 25, pasantias: 20 },
-          { name: "Junio", estudiantes: 30, pasantias: 25 }
-        ],
-        pieData: [
-          { name: "Desarrollo Web", value: 35, color: "#3b82f6" },
-          { name: "Diseño UX", value: 25, color: "#10b981" },
-          { name: "Marketing Digital", value: 20, color: "#f59e0b" },
-          { name: "Data Science", value: 20, color: "#8b5cf6" }
-        ],
-        tableData: [
-          { id: 1, nombre: "Juan Pérez", taller: "Desarrollo Web", empresa: "TechCorp", estado: "Activo", horas: 240 },
-          { id: 2, nombre: "María García", taller: "Diseño UX", empresa: "DesignHub", estado: "Activo", horas: 180 },
-          { id: 3, nombre: "Carlos Rodríguez", taller: "Marketing Digital", empresa: "AdAgency", estado: "Completado", horas: 200 },
-          { id: 4, nombre: "Ana Martínez", taller: "Data Science", empresa: "DataLab", estado: "Activo", horas: 220 }
-        ]
-      }
-    
-    case "calificaciones":
-      return {
-        title: "Reporte de Calificaciones",
-        icon: Star,
-        summary: {
-          totalCalificaciones: 156,
-          promedioGeneral: 8.5,
-          calificacionesAltas: 89,
-          calificacionesBajas: 12
-        },
-        chartData: [
-          { name: "Desarrollo Web", promedio: 8.7, total: 45 },
-          { name: "Diseño UX", promedio: 8.2, total: 38 },
-          { name: "Marketing Digital", promedio: 8.9, total: 42 },
-          { name: "Data Science", promedio: 8.1, total: 31 }
-        ],
-        pieData: [
-          { name: "Excelente (9-10)", value: 45, color: "#10b981" },
-          { name: "Bueno (7-8)", value: 78, color: "#3b82f6" },
-          { name: "Regular (5-6)", value: 25, color: "#f59e0b" },
-          { name: "Insuficiente (<5)", value: 8, color: "#ef4444" }
-        ],
-        tableData: [
-          { id: 1, estudiante: "Juan Pérez", taller: "Desarrollo Web", nota: 9.2, evaluador: "Prof. Smith" },
-          { id: 2, estudiante: "María García", taller: "Diseño UX", nota: 8.5, evaluador: "Prof. Johnson" },
-          { id: 3, estudiante: "Carlos Rodríguez", taller: "Marketing Digital", nota: 7.8, evaluador: "Prof. Davis" },
-          { id: 4, estudiante: "Ana Martínez", taller: "Data Science", nota: 9.0, evaluador: "Prof. Wilson" }
-        ]
-      }
-    
-    case "asignaciones":
-      return {
-        title: "Reporte de Asignaciones",
-        icon: Building2,
-        summary: {
-          totalAsignaciones: 67,
-          empresasActivas: 23,
-          plazasDisponibles: 15,
-          asignacionesPendientes: 8
-        },
-        chartData: [
-          { name: "TechCorp", asignados: 12, capacidad: 15 },
-          { name: "DesignHub", asignados: 8, capacidad: 10 },
-          { name: "AdAgency", asignados: 6, capacidad: 8 },
-          { name: "DataLab", asignados: 10, capacidad: 12 },
-          { name: "StartupXYZ", asignados: 4, capacidad: 6 }
-        ],
-        pieData: [
-          { name: "Tecnología", value: 35, color: "#3b82f6" },
-          { name: "Diseño", value: 20, color: "#8b5cf6" },
-          { name: "Marketing", value: 25, color: "#f59e0b" },
-          { name: "Consultoría", value: 20, color: "#10b981" }
-        ],
-        tableData: [
-          { id: 1, estudiante: "Juan Pérez", empresa: "TechCorp", puesto: "Frontend Developer", fecha: "2024-01-15" },
-          { id: 2, estudiante: "María García", empresa: "DesignHub", puesto: "UX Designer", fecha: "2024-01-20" },
-          { id: 3, estudiante: "Carlos Rodríguez", empresa: "AdAgency", puesto: "Marketing Analyst", fecha: "2024-02-01" },
-          { id: 4, estudiante: "Ana Martínez", empresa: "DataLab", puesto: "Data Analyst", fecha: "2024-02-10" }
-        ]
-      }
-    
-    case "documentacion":
-      return {
-        title: "Reporte de Documentación Estudiantil",
-        icon: FolderOpen,
-        summary: {
-          totalDocumentos: 234,
-          documentosCompletos: 189,
-          documentosPendientes: 45,
-          estudiantesConDocumentos: 67
-        },
-        chartData: [
-          { name: "Enero", documentos: 35, completados: 28 },
-          { name: "Febrero", documentos: 42, completados: 35 },
-          { name: "Marzo", documentos: 38, completados: 32 },
-          { name: "Abril", documentos: 45, completados: 38 },
-          { name: "Mayo", documentos: 40, completados: 34 },
-          { name: "Junio", documentos: 34, completados: 22 }
-        ],
-        pieData: [
-          { name: "CV", value: 67, color: "#3b82f6" },
-          { name: "Carta Recomendación", value: 45, color: "#10b981" },
-          { name: "Certificados", value: 56, color: "#f59e0b" },
-          { name: "Formularios", value: 66, color: "#8b5cf6" }
-        ],
-        tableData: [
-          { id: 1, estudiante: "Juan Pérez", tipo: "CV", estado: "Completado", fecha: "2024-01-15" },
-          { id: 2, estudiante: "María García", tipo: "Carta Recomendación", estado: "Pendiente", fecha: "2024-01-20" },
-          { id: 3, estudiante: "Carlos Rodríguez", tipo: "Certificados", estado: "Completado", fecha: "2024-02-01" },
-          { id: 4, estudiante: "Ana Martínez", tipo: "Formularios", estado: "Completado", fecha: "2024-02-10" }
-        ]
-      }
-    
-    default:
-      return null
-  }
-}
-
 export const ReportPreview = ({ reportType, filters, onClose }: ReportPreviewProps) => {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
   const [showTallerSelector, setShowTallerSelector] = useState(true)
   const [selectedTaller, setSelectedTaller] = useState(filters.taller || "")
   const [currentPeriodo, setCurrentPeriodo] = useState(filters.periodo || "2024")
-  const reportData = getMockData(reportType)
+  const [reportData, setReportData] = useState<ReportData | null>(null)
+  const [loading, setLoading] = useState(true)
+  
+  // Cargar datos del reporte usando el service
+  useEffect(() => {
+    const loadReportData = async () => {
+      try {
+        setLoading(true)
+        const data = await ReporteService.getReporteData(reportType)
+        setReportData(data)
+      } catch (error) {
+        console.error('Error cargando datos del reporte:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    loadReportData()
+  }, [reportType])
+  
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+        <div className="bg-white rounded-lg p-8 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando datos del reporte...</p>
+        </div>
+      </div>
+    )
+  }
   
   if (!reportData) return null
 
@@ -191,48 +113,91 @@ export const ReportPreview = ({ reportType, filters, onClose }: ReportPreviewPro
     setIsGeneratingPDF(true)
     
     try {
+      console.log('🚀 Iniciando generación de PDF con dom-to-image...')
+      console.log('📍 Navegador:', navigator.userAgent)
+      
       const element = document.getElementById('report-preview-content')
-      if (!element) return
-      
-      // Crear canvas del contenido
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true
-      })
-      
-      const imgData = canvas.toDataURL('image/png')
-      
-      // Crear PDF
-      const pdf = new jsPDF('p', 'mm', 'a4')
-      const imgWidth = 210
-      const pageHeight = 295
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
-      let heightLeft = imgHeight
-      let position = 0
-      
-      // Agregar imagen al PDF
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-      heightLeft -= pageHeight
-      
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight
-        pdf.addPage()
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
+      if (!element) {
+        console.error('❌ No se encontró el elemento report-preview-content')
+        alert('Error: No se encontró el contenido del reporte')
+        return
       }
       
-      // Descargar PDF
-      pdf.save(`${reportData.title.replace(/\s+/g, '_')}_${selectedTaller}_${filters.periodo}.pdf`)
+      console.log('✅ Elemento encontrado:', element)
+      console.log('📐 Dimensiones del elemento:', {
+        scrollWidth: element.scrollWidth,
+        scrollHeight: element.scrollHeight,
+        offsetWidth: element.offsetWidth,
+        offsetHeight: element.offsetHeight
+      })
+      
+      // Usar dom-to-image en lugar de html2canvas
+      const dataUrl = await domtoimage.toPng(element, {
+        quality: 1.0,
+        width: element.scrollWidth,
+        height: element.scrollHeight,
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left'
+        }
+      })
+      
+      console.log('🖼️ Imagen generada con dom-to-image, tamaño:', dataUrl.length)
+      
+      // Crear PDF con jsPDF
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      })
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      
+      // Crear imagen para obtener dimensiones
+      const img = new Image()
+      img.src = dataUrl
+      
+      await new Promise((resolve) => {
+        img.onload = resolve
+      })
+      
+      const imgWidth = pdfWidth
+      const imgHeight = (img.height * pdfWidth) / img.width
+      
+      console.log('📄 Dimensiones PDF:', { pdfWidth, pdfHeight, imgWidth, imgHeight })
+      
+      if (imgHeight <= pdfHeight) {
+        // Una sola página
+        pdf.addImage(dataUrl, 'PNG', 0, 0, imgWidth, imgHeight)
+        console.log('📄 PDF de una página agregado')
+      } else {
+        // Múltiples páginas
+        const totalPages = Math.ceil(imgHeight / pdfHeight)
+        console.log('📄 PDF de', totalPages, 'páginas')
+        for (let i = 0; i < totalPages; i++) {
+          if (i > 0) pdf.addPage()
+          const yOffset = -(i * pdfHeight)
+          pdf.addImage(dataUrl, 'PNG', 0, yOffset, imgWidth, imgHeight)
+        }
+      }
+      
+      const fileName = `${reportData.title.replace(/\s+/g, '_')}_${selectedTaller || 'todos'}_${filters.periodo}.pdf`
+      console.log('💾 Guardando PDF:', fileName)
+      
+      pdf.save(fileName)
+      console.log('✅ PDF descargado exitosamente')
       
     } catch (error) {
-      console.error('Error generando PDF:', error)
+      console.error('❌ Error general generando PDF:', error)
+      console.error('❌ Stack trace:', (error as Error).stack)
+      alert(`Error al generar el PDF: ${(error as Error).message || 'Error desconocido'}`)
     } finally {
       setIsGeneratingPDF(false)
     }
   }
 
-  const Icon = reportData.icon
+  const Icon = reportData.icon ? FileText : FileText
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -275,7 +240,7 @@ export const ReportPreview = ({ reportType, filters, onClose }: ReportPreviewPro
               </Button>
               <Button
                 onClick={handleDownloadPDF}
-                disabled={isGeneratingPDF || showTallerSelector}
+                disabled={isGeneratingPDF}
                 className="gap-2 bg-blue-600 hover:bg-blue-700"
               >
                 <Download className="h-4 w-4" />
@@ -425,7 +390,7 @@ export const ReportPreview = ({ reportType, filters, onClose }: ReportPreviewPro
                   <table className="w-full border-collapse border border-gray-300">
                     <thead>
                       <tr className="bg-gray-50">
-                        {Object.keys(reportData.tableData[0]).map((key) => (
+                        {reportData.tableData && Object.keys(reportData.tableData[0]).map((key) => (
                           <th key={key} className="border border-gray-300 px-4 py-2 text-left font-semibold">
                             {key.charAt(0).toUpperCase() + key.slice(1)}
                           </th>
@@ -433,7 +398,7 @@ export const ReportPreview = ({ reportType, filters, onClose }: ReportPreviewPro
                       </tr>
                     </thead>
                     <tbody>
-                      {reportData.tableData.map((row, index) => (
+                      {reportData.tableData?.map((row, index) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           {Object.values(row).map((value, cellIndex) => (
                             <td key={cellIndex} className="border border-gray-300 px-4 py-2">

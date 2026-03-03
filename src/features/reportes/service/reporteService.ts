@@ -83,6 +83,12 @@ export class ReporteService {
           { name: 'Diseño UX', value: 25, color: '#10b981' },
           { name: 'Marketing Digital', value: 20, color: '#f59e0b' },
           { name: 'Data Science', value: 20, color: '#8b5cf6' }
+        ],
+        tableData: [
+          { id: 1, nombre: 'Juan Pérez', taller: 'Desarrollo Web', empresa: 'TechCorp', estado: 'Activo', horas: 240 },
+          { id: 2, nombre: 'María García', taller: 'Diseño UX', empresa: 'DesignHub', estado: 'Activo', horas: 180 },
+          { id: 3, nombre: 'Carlos Rodríguez', taller: 'Marketing Digital', empresa: 'AdAgency', estado: 'Completado', horas: 200 },
+          { id: 4, nombre: 'Ana Martínez', taller: 'Data Science', empresa: 'DataLab', estado: 'Activo', horas: 220 }
         ]
       },
       'calificaciones': {
@@ -104,6 +110,12 @@ export class ReporteService {
           { name: 'Bueno (7-8)', value: 78, color: '#3b82f6' },
           { name: 'Regular (5-6)', value: 25, color: '#f59e0b' },
           { name: 'Insuficiente (<5)', value: 8, color: '#ef4444' }
+        ],
+        tableData: [
+          { id: 1, estudiante: 'Juan Pérez', taller: 'Desarrollo Web', nota: 9.2, evaluador: 'Prof. Smith' },
+          { id: 2, estudiante: 'María García', taller: 'Diseño UX', nota: 8.5, evaluador: 'Prof. Johnson' },
+          { id: 3, estudiante: 'Carlos Rodríguez', taller: 'Marketing Digital', nota: 7.8, evaluador: 'Prof. Davis' },
+          { id: 4, estudiante: 'Ana Martínez', taller: 'Data Science', nota: 9.0, evaluador: 'Prof. Wilson' }
         ]
       },
       'asignaciones': {
@@ -126,6 +138,12 @@ export class ReporteService {
           { name: 'Diseño', value: 20, color: '#8b5cf6' },
           { name: 'Marketing', value: 25, color: '#f59e0b' },
           { name: 'Consultoría', value: 20, color: '#10b981' }
+        ],
+        tableData: [
+          { id: 1, estudiante: 'Juan Pérez', empresa: 'TechCorp', puesto: 'Frontend Developer', fecha: '2024-01-15' },
+          { id: 2, estudiante: 'María García', empresa: 'DesignHub', puesto: 'UX Designer', fecha: '2024-01-20' },
+          { id: 3, estudiante: 'Carlos Rodríguez', empresa: 'AdAgency', puesto: 'Marketing Analyst', fecha: '2024-02-01' },
+          { id: 4, estudiante: 'Ana Martínez', empresa: 'DataLab', puesto: 'Data Analyst', fecha: '2024-02-10' }
         ]
       },
       'documentacion': {
@@ -149,6 +167,12 @@ export class ReporteService {
           { name: 'Carta Recomendación', value: 45, color: '#10b981' },
           { name: 'Certificados', value: 56, color: '#f59e0b' },
           { name: 'Formularios', value: 66, color: '#8b5cf6' }
+        ],
+        tableData: [
+          { id: 1, estudiante: 'Juan Pérez', tipo: 'CV', estado: 'Completado', fecha: '2024-01-15' },
+          { id: 2, estudiante: 'María García', tipo: 'Carta Recomendación', estado: 'Pendiente', fecha: '2024-01-20' },
+          { id: 3, estudiante: 'Carlos Rodríguez', tipo: 'Certificados', estado: 'Completado', fecha: '2024-02-01' },
+          { id: 4, estudiante: 'Ana Martínez', tipo: 'Formularios', estado: 'Completado', fecha: '2024-02-10' }
         ]
       }
     }
