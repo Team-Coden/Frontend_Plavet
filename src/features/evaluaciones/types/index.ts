@@ -56,3 +56,68 @@ export interface Contacto {
   extension?: string;
   esPrincipal: boolean;
 }
+
+export interface EvaluacionForm {
+  // Datos Personales
+  identidadTitulo: string;
+  codigoTitulo: string;
+  nombreApellidos: string;
+  horario: string;
+  direccion: string;
+  telefonos: string;
+  fechaInicioPasantia: string;
+  fechaTerminoPasantia: string;
+  
+  // Datos de la empresa
+  centroTrabajo: string;
+  direccionEmpresa: string;
+  telefonosEmpresa: string;
+  personaContacto: string;
+  nombreTutor: string;
+  telefonosCorreoTutor: string;
+  
+  // Evaluación por semanas (Capacidades)
+  conocimientosTeoricos: string[];
+  asimilacionInstruccionesVerbales: string[];
+  asimilacionInstruccionesEscritas: string[];
+  asimilacionInstruccionesSimbolicas: string[];
+  subtotalCapacidad: string[];
+  
+  // Evaluación por semanas (Habilidades)
+  organizacionPlanificacion: string[];
+  metodo: string[];
+  ritmoTrabajo: string[];
+  trabajoRealizado: string[];
+  subtotalHabilidad: string[];
+  
+  // Evaluación por semanas (Actitudes)
+  iniciativa: string[];
+  trabajoEquipo: string[];
+  puntualidadAsistencia: string[];
+  responsabilidad: string[];
+  subtotalActitud: string[];
+  total: string[];
+  
+  // Promedios y nota final
+  promedioCapacidades: string;
+  promedioHabilidades: string;
+  promedioActitudes: string;
+  notaFinal: string;
+  
+  // Observaciones
+  observaciones: string;
+  
+  // Firmas
+  firmaTutorCentro: string;
+  firmaTutorEducativo: string;
+  fechaFirma: string;
+}
+
+export interface EvaluacionSimple {
+  id: string;
+  nombreApellidos: string;
+  centroTrabajo: string;
+  notaFinal: string;
+  fechaEvaluacion: string;
+  estado: 'Borrador' | 'Enviada' | 'Aprobada' | 'Rechazada';
+}
