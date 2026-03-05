@@ -19,6 +19,7 @@ import VinculadoresPage from '@/features/rolesYpersonal/vinculadores/pages/page'
 import EstudiantesPage from '@/features/gestionAcademica/estudiantes/pages/page';
 import TalleresPage from '@/features/gestionAcademica/talleres/pages/page';
 
+
 function RoutersProtected() {
   return (
     <BrowserRouter>
@@ -42,6 +43,7 @@ function RoutersProtected() {
         <Route path="/vinculadores" element={<VinculadoresPage/>} />
         <Route path="/estudiantes" element={<EstudiantesPage/>} />
         <Route path="/talleres" element={<TalleresPage/>} />
+        
       </Routes>
     </BrowserRouter>
   )
