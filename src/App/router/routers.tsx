@@ -9,7 +9,7 @@ import TutoresPage from '@/features/gestionInstitucional/tutores/pages/page';
 import DocumentosPage from '@/features/documentacion/pages/page';
 import SubirDocumentosPage from '@/features/documentacion/subir/page';
 import EvaluacionesPage from '@/features/evaluaciones/pages/page';
-import CalificacionesPage from '@/features/evaluaciones/calificacion/page';
+import CalificacionesPage from '../../features/evaluaciones/calificacion/pages/page';
 import ReportesPage from '@/features/reportes/page';
 import CierrePasantiasPage from '@/features/procesoDePasantias/cierreDePasantias/pages/page';
 import ExcusasPage from '@/features/procesoDePasantias/excusas/pages/page';

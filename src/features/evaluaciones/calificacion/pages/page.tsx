@@ -1,35 +1,38 @@
 "use client"
 
-import { Button } from "../../../shared/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../shared/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../shared/components/ui/select"
-import { Input } from "../../../shared/components/ui/input"
+import { useState } from "react"
+
+import { Button } from "../../../../shared/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../../shared/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../../shared/components/ui/select"
+import { Input } from "../../../../shared/components/ui/input"
 import { 
   Table, 
   TableHeader, 
   TableRow, 
   TableHead, 
   TableBody,
-  TableCell 
-} from "../../../shared/components/ui/table"
+  TableCell
+} from "../../../../shared/components/ui/table"
 import { 
   GraduationCap, 
   Award, 
-  BookOpen, 
-  TrendingUp, 
   Search, 
   Filter, 
   Download, 
-  Eye, 
-  Edit, 
   ChevronLeft, 
   ChevronRight,
   CheckCircle,
-  XCircle
+  XCircle,
+  Eye,
+  Edit
 } from "lucide-react"
 import Main from "@/features/main/pages/page"
-import { useCalificaciones } from "./useCalificaciones"
-import { isApproved } from "./utils"
+import { useCalificaciones } from "../hooks/useCalificaciones"
+import { isApproved } from "../utils"
+import { StatsCards, ViewCalificacionDialog, EditCalificacionDialog } from "../components"
+import { CalificacionService } from "../services/calificacionService"
+import type { EvaluacionGuardada, FilterNota } from "../types"
 
 export default function CalificacionesPage() {
   const {
@@ -44,6 +47,46 @@ export default function CalificacionesPage() {
     setFilterNota,
     stats,
   } = useCalificaciones();
+
+  // Estado para los diálogos
+  const [viewDialogOpen, setViewDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [selectedEvaluacion, setSelectedEvaluacion] = useState<EvaluacionGuardada | null>(null);
+
+  // Handlers para acciones
+  const handleView = (evaluacion: EvaluacionGuardada) => {
+    setSelectedEvaluacion(evaluacion);
+    setViewDialogOpen(true);
+  };
+
+  const handleEdit = (evaluacion: EvaluacionGuardada) => {
+    setSelectedEvaluacion(evaluacion);
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveEdit = (updatedEvaluacion: EvaluacionGuardada) => {
+    // Actualizar la evaluación en el service
+    const evaluaciones = CalificacionService.getEvaluaciones();
+    const index = evaluaciones.findIndex(e => e.id === updatedEvaluacion.id);
+    
+    if (index !== -1) {
+      evaluaciones[index] = updatedEvaluacion;
+      CalificacionService.saveEvaluaciones(evaluaciones);
+      
+      // Recargar la página para mostrar los cambios
+      window.location.reload();
+    }
+  };
+
+  const handleCloseViewDialog = () => {
+    setViewDialogOpen(false);
+    setSelectedEvaluacion(null);
+  };
+
+  const handleCloseEditDialog = () => {
+    setEditDialogOpen(false);
+    setSelectedEvaluacion(null);
+  };
 
   // Exportar a CSV
   const handleExport = () => {
@@ -92,55 +135,7 @@ export default function CalificacionesPage() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card>
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                  <GraduationCap className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Evaluaciones</p>
-                  <p className="text-2xl font-bold">{stats.total}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Promedio General</p>
-                  <p className="text-2xl font-bold">{stats.promedioGeneral}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                  <Award className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Aprobados</p>
-                  <p className="text-2xl font-bold">{stats.aprobados}</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                  <BookOpen className="h-6 w-6 text-red-600 dark:text-red-400" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Reprobados</p>
-                  <p className="text-2xl font-bold">{stats.reprobados}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <StatsCards stats={stats} />
 
           {/* Main Content */}
           <Card className="border">
@@ -193,7 +188,7 @@ export default function CalificacionesPage() {
                       />
                     </div>
 
-                    <Select value={filterNota} onValueChange={setFilterNota}>
+                    <Select value={filterNota} onValueChange={(value: FilterNota) => setFilterNota(value)}>
                       <SelectTrigger className="w-full md:w-48">
                         <Filter className="h-4 w-4 mr-2" />
                         <SelectValue placeholder="Filtrar por nota" />
@@ -220,7 +215,7 @@ export default function CalificacionesPage() {
                           <TableHead className="font-semibold">Empresa</TableHead>
                           <TableHead className="font-semibold">Promedios</TableHead>
                           <TableHead className="font-semibold">Nota Final</TableHead>
-                          <TableHead className="font-semibold">Aprobado</TableHead>
+                          <TableHead className="font-semibold">Estado</TableHead>
                           <TableHead className="font-semibold">Fecha</TableHead>
                           <TableHead className="font-semibold text-right">Acciones</TableHead>
                         </TableRow>
@@ -288,11 +283,20 @@ export default function CalificacionesPage() {
                             </TableCell>
                             <TableCell className="text-right">
                               <div className="flex items-center justify-end gap-2">
-                                <Button variant="outline" size="sm" className="gap-1">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  className="gap-1"
+                                  onClick={() => handleView(evaluacion)}
+                                >
                                   <Eye className="h-4 w-4" />
                                   Ver
                                 </Button>
-                                <Button size="sm" className="gap-1">
+                                <Button 
+                                  size="sm" 
+                                  className="gap-1"
+                                  onClick={() => handleEdit(evaluacion)}
+                                >
                                   <Edit className="h-4 w-4" />
                                   Editar
                                 </Button>
@@ -367,6 +371,20 @@ export default function CalificacionesPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Diálogos */}
+        <ViewCalificacionDialog
+          evaluacion={selectedEvaluacion}
+          open={viewDialogOpen}
+          onClose={handleCloseViewDialog}
+        />
+
+        <EditCalificacionDialog
+          evaluacion={selectedEvaluacion}
+          open={editDialogOpen}
+          onClose={handleCloseEditDialog}
+          onSave={handleSaveEdit}
+        />
       </div>
     </Main>
   );
