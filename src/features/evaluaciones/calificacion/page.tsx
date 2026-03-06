@@ -28,8 +28,9 @@ import {
   XCircle
 } from "lucide-react"
 import Main from "@/features/main/pages/page"
-import { useCalificaciones } from "./useCalificaciones"
+import { useCalificaciones } from "./hooks/useCalificaciones"
 import { isApproved } from "./utils"
+import type { EvaluacionGuardada, FilterNota } from "./types"
 
 export default function CalificacionesPage() {
   const {
@@ -50,7 +51,7 @@ export default function CalificacionesPage() {
     const headers = ['Estudiante', 'Empresa', 'Promedio Capacidades', 'Promedio Habilidades', 'Promedio Actitudes', 'Nota Final', 'Fecha Evaluación'];
     const csvContent = [
       headers.join(','),
-      ...paginatedEvaluaciones.map(evaluacion => [
+      ...paginatedEvaluaciones.map((evaluacion: EvaluacionGuardada) => [
         evaluacion.estudiante,
         evaluacion.empresa,
         evaluacion.promedioCapacidades,
@@ -193,7 +194,7 @@ export default function CalificacionesPage() {
                       />
                     </div>
 
-                    <Select value={filterNota} onValueChange={setFilterNota}>
+                    <Select value={filterNota} onValueChange={(value: FilterNota) => setFilterNota(value)}>
                       <SelectTrigger className="w-full md:w-48">
                         <Filter className="h-4 w-4 mr-2" />
                         <SelectValue placeholder="Filtrar por nota" />
@@ -226,7 +227,7 @@ export default function CalificacionesPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {paginatedEvaluaciones.map((evaluacion) => (
+                        {paginatedEvaluaciones.map((evaluacion: EvaluacionGuardada) => (
                           <TableRow key={evaluacion.id} className="hover:bg-muted/50">
                             <TableCell className="font-medium">
                               #{evaluacion.id.slice(-6)}
