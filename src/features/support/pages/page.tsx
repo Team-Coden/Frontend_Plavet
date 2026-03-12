@@ -1,259 +1,316 @@
-"use client"
-
-import { BookOpen, MessageCircle, Mail, Phone, LayoutDashboard, FileText, Briefcase, ClipboardCheck, Users, Building2 } from "lucide-react";
-import Main from "@/features/main/pages/page";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../shared/components/ui/card";
-import { Button } from "../../../shared/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../../shared/components/ui/card"
+import { Badge } from "../../../shared/components/ui/badge"
+import {
+  HelpCircle,
+  BookOpen,
+  MessageCircle,
+  Phone,
+  Mail,
+  FileText,
+  Video,
+  Download,
+  Users,
+  Shield,
+  Clock,
+  CheckCircle,
+} from "lucide-react"
+import Main from "../../main/pages/page"
 
 export default function SupportPage() {
-  const modules = [
+  const helpCategories = [
     {
-      id: 'dashboard',
-      title: 'Dashboard',
-      description: 'Panel principal con métricas y estadísticas',
-      icon: LayoutDashboard,
-      color: 'bg-blue-100 text-blue-600',
-      features: ['Métricas en tiempo real', 'Gráficos interactivos', 'Reportes rápidos']
+      icon: BookOpen,
+      title: "Guías de Usuario",
+      description: "Documentación completa para aprender a usar todas las funcionalidades del sistema.",
+      items: [
+        "Guía de inicio rápido",
+        "Gestión de estudiantes",
+        "Administración de centros",
+        "Control de pasantías",
+        "Generación de reportes"
+      ]
     },
     {
-      id: 'documentacion',
-      title: 'Documentación',
-      description: 'Gestión de documentos y archivos',
+      icon: Video,
+      title: "Tutoriales en Video",
+      description: "Videos paso a paso para visualizar el funcionamiento de cada módulo.",
+      items: [
+        "Tutorial de registro",
+        "Asignación de pasantías",
+        "Configuración de perfiles",
+        "Uso del dashboard",
+        "Exportación de datos"
+      ]
+    },
+    {
       icon: FileText,
-      color: 'bg-green-100 text-green-600',
-      features: ['Subida de archivos', 'Organización por carpetas', 'Búsqueda avanzada']
+      title: "Documentos y Formatos",
+      description: "Plantillas y formatos oficiales para descargar y usar en el sistema.",
+      items: [
+        "Formato de solicitud",
+        "Plantilla de informe",
+        "Guía de evaluación",
+        "Manual de procedimientos",
+        "Políticas del sistema"
+      ]
     },
     {
-      id: 'pasantias',
-      title: 'Pasantías',
-      description: 'Proceso completo de gestión de pasantías',
-      icon: Briefcase,
-      color: 'bg-purple-100 text-purple-600',
-      features: ['Registro de estudiantes', 'Seguimiento', 'Evaluaciones']
+      icon: MessageCircle,
+      title: "Soporte Directo",
+      description: "Comunicación directa con nuestro equipo de soporte técnico.",
+      items: [
+        "Chat en vivo",
+        "Sistema de tickets",
+        "Foro de usuarios",
+        "FAQ actualizada",
+        "Contacto directo"
+      ]
+    }
+  ];
+
+  const quickActions = [
+    {
+      icon: BookOpen,
+      title: "Manual Completo",
+      description: "Accede a la documentación completa del sistema",
+      action: () => console.log("Abrir manual")
     },
     {
-      id: 'evaluaciones',
-      title: 'Evaluaciones',
-      description: 'Sistema de calificación y pruebas',
-      icon: ClipboardCheck,
-      color: 'bg-orange-100 text-orange-600',
-      features: ['Creación de pruebas', 'Calificación automática', 'Reportes de resultados']
+      icon: Video,
+      title: "Ver Tutoriales",
+      description: "Explora nuestros tutoriales en video",
+      action: () => console.log("Ver tutoriales")
     },
     {
-      id: 'personal',
-      title: 'Personal',
-      description: 'Gestión de usuarios y roles',
-      icon: Users,
-      color: 'bg-red-100 text-red-600',
-      features: ['Administración de usuarios', 'Asignación de roles', 'Permisos']
+      icon: MessageCircle,
+      title: "Contactar Soporte",
+      description: "Habla con nuestro equipo de soporte",
+      action: () => console.log("Contactar soporte")
     },
     {
-      id: 'institucional',
-      title: 'Gestión Institucional',
-      description: 'Configuración de la institución',
-      icon: Building2,
-      color: 'bg-cyan-100 text-cyan-600',
-      features: ['Centros de trabajo', 'Plazas disponibles', 'Configuración general']
+      icon: Download,
+      title: "Descargar Recursos",
+      description: "Obtén plantillas y documentos útiles",
+      action: () => console.log("Descargar recursos")
+    }
+  ];
+
+  const supportInfo = [
+    {
+      icon: Phone,
+      title: "Teléfono",
+      content: "+1 (555) 123-4567",
+      description: "Lunes a Viernes, 8:00 AM - 6:00 PM"
+    },
+    {
+      icon: Mail,
+      title: "Email",
+      content: "soporte@checkint.edu",
+      description: "Respuesta en 24 horas"
+    },
+    {
+      icon: MessageCircle,
+      title: "Chat en Vivo",
+      content: "Disponible 24/7",
+      description: "Soporte instantáneo"
     }
   ];
 
   return (
     <Main>
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <BookOpen className="h-6 w-6 text-blue-600" />
-              </div>
-              <h1 className="text-3xl font-bold text-foreground">
-                Centro de Ayuda
+        {/* Hero Section */}
+        <section className="border-b relative overflow-hidden bg-primary-foreground">
+          <div className="container mx-auto px-6 py-16 lg:py-24 relative z-10">
+            <div className="mx-auto max-w-4xl text-center">
+              <Badge variant="secondary" className="mb-6 text-sm font-medium">
+                Centro de Ayuda y Soporte
+              </Badge>
+              
+              <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+                ¿Cómo podemos <span className="text-primary">ayudarte</span>?
               </h1>
+              
+              <p className="mx-auto mb-8 max-w-2xl text-pretty text-lg leading-relaxed md:text-xl">
+                Encuentra respuestas, tutoriales y soporte técnico para aprovechar al máximo todas las 
+                funcionalidades de CHECKiNT.
+              </p>
             </div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Encuentra guías específicas para cada módulo y contacta con nuestro equipo 
-              de soporte si necesitas asistencia adicional.
-            </p>
           </div>
+        </section>
 
-          {/* Modules Help Section */}
-          <div className="mb-12">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Ayuda por Módulos
+        {/* Quick Actions */}
+        <section className="py-12 bg-muted/30">
+          <div className="container mx-auto px-6">
+            <div className="mb-8 text-center">
+              <h2 className="mb-4 text-2xl font-bold tracking-tight">
+                Acciones Rápidas
               </h2>
-              <p className="text-gray-600">
-                Selecciona un módulo para ver guías específicas y tutoriales
+              <p className="mx-auto max-w-2xl text-pretty">
+                Accede directamente a los recursos más solicitados
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {modules.map((module) => {
-                const Icon = module.icon;
-                return (
-                  <Card key={module.id} className="border-2 hover:shadow-lg transition-all duration-200 hover:border-blue-300">
-                    <CardHeader className="text-center pb-3">
-                      <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 ${module.color}`}>
-                        <Icon className="h-8 w-8" />
-                      </div>
-                      <CardTitle className="text-xl">{module.title}</CardTitle>
-                      <CardDescription className="text-sm">
-                        {module.description}
-                      </CardDescription>
-                    </CardHeader>
-                    
-                    <CardContent className="pt-0">
-                      <div className="space-y-4">
-                        {/* Features */}
-                        <div className="space-y-2">
-                          {module.features.map((feature, index) => (
-                            <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
-                              <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                              <span>{feature}</span>
-                            </div>
-                          ))}
-                        </div>
-                        
-                        {/* Action Buttons */}
-                        <div className="space-y-2">
-                          <Button className="w-full" variant="default">
-                            Ver Guía Rápida
-                          </Button>
-                          <Button className="w-full" variant="outline">
-                            Tutoriales Completos
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {quickActions.map((action, index) => (
+                <Card key={index} className="group cursor-pointer transition-all hover:shadow-lg" onClick={action.action}>
+                  <CardHeader className="text-center">
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
+                      <action.icon className="h-7 w-7 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">{action.title}</CardTitle>
+                    <CardDescription>{action.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              ))}
             </div>
           </div>
+        </section>
 
-          {/* Contact Options */}
-          <div className="mb-12">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                ¿Necesitas Ayuda Adicional?
+        {/* Help Categories */}
+        <section className="py-20">
+          <div className="container mx-auto px-6">
+            <div className="mb-16 text-center">
+              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                Categorías de Ayuda
               </h2>
-              <p className="text-gray-600">
-                Contacta directamente con nuestro equipo de soporte técnico
+              <p className="mx-auto max-w-2xl text-pretty text-lg leading-relaxed">
+                Explora nuestros recursos organizados por categorías para encontrar exactamente lo que necesitas
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="border-2 hover:shadow-lg transition-all duration-200">
-                <CardHeader className="text-center pb-3">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <MessageCircle className="h-6 w-6 text-green-600" />
-                  </div>
-                  <CardTitle className="text-lg">Chat en Vivo</CardTitle>
-                  <CardDescription className="text-sm">
-                    Habla con nuestro equipo en tiempo real
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="text-center pt-0">
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">
-                      Lun - Vie: 9:00 - 18:00
-                    </p>
-                    <Button className="w-full">
-                      Iniciar Chat
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-2 hover:shadow-lg transition-all duration-200">
-                <CardHeader className="text-center pb-3">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Mail className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <CardTitle className="text-lg">Email</CardTitle>
-                  <CardDescription className="text-sm">
-                    Envíanos un correo electrónico
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="text-center pt-0">
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">
-                      Respuesta en 24 horas
-                    </p>
-                    <Button variant="outline" className="w-full">
-                      Enviar Email
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-2 hover:shadow-lg transition-all duration-200">
-                <CardHeader className="text-center pb-3">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Phone className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <CardTitle className="text-lg">Teléfono</CardTitle>
-                  <CardDescription className="text-sm">
-                    Llama a nuestro centro de ayuda
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="text-center pt-0">
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">
-                      Lun - Vie: 8:00 - 20:00
-                    </p>
-                    <Button variant="outline" className="w-full">
-                      +1 (555) 123-4567
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+            <div className="grid gap-8 md:grid-cols-2">
+              {helpCategories.map((category, index) => (
+                <Card key={index} className="group transition-all hover:shadow-lg">
+                  <CardHeader>
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
+                      <category.icon className="h-7 w-7 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">{category.title}</CardTitle>
+                    <CardDescription>{category.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {category.items.map((item, itemIndex) => (
+                        <li key={itemIndex} className="flex items-center gap-3">
+                          <CheckCircle className="h-4 w-4 text-green-600 shrink-0" />
+                          <span className="text-sm">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
+        </section>
 
-          {/* FAQ Section */}
-          <Card className="border-2 border-gray-200">
-            <CardHeader className="text-center">
-              <CardTitle className="text-xl">Preguntas Frecuentes</CardTitle>
-              <CardDescription>
-                Respuestas rápidas a las preguntas más comunes
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent className="pt-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  {
-                    question: "¿Cómo accedo a los diferentes módulos?",
-                    answer: "Usa el menú de navegación principal para acceder a cada módulo."
-                  },
-                  {
-                    question: "¿Cómo restablezco mi contraseña?",
-                    answer: "Haz clic en '¿Olvidaste tu contraseña?' en la página de login."
-                  },
-                  {
-                    question: "¿Cómo contacto a soporte técnico?",
-                    answer: "Usa cualquiera de los métodos de contacto que aparecen arriba."
-                  },
-                  {
-                    question: "¿Qué navegadores son compatibles?",
-                    answer: "Recomendamos Chrome, Firefox, Safari o Edge en versiones recientes."
-                  }
-                ].map((faq, index) => (
-                  <div key={index} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                    <h4 className="font-medium text-gray-900 mb-2">{faq.question}</h4>
-                    <p className="text-sm text-gray-600">{faq.answer}</p>
-                  </div>
-                ))}
+        {/* Support Information */}
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-6">
+            <div className="mb-16 text-center">
+              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                Contacto Directo
+              </h2>
+              <p className="mx-auto max-w-2xl text-pretty text-lg leading-relaxed">
+                Nuestro equipo de soporte está disponible para ayudarte cuando lo necesites
+              </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3">
+              {supportInfo.map((info, index) => (
+                <Card key={index} className="text-center transition-all hover:shadow-lg">
+                  <CardHeader>
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
+                      <info.icon className="h-7 w-7 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">{info.title}</CardTitle>
+                    <CardDescription>{info.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-semibold">{info.content}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section className="py-20">
+          <div className="container mx-auto px-6">
+            <div className="mb-16 text-center">
+              <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+                Características del Soporte
+              </h2>
+              <p className="mx-auto max-w-2xl text-pretty text-lg leading-relaxed">
+                Conoce las ventajas de nuestro sistema de soporte integral
+              </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <Clock className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-semibold">Disponibilidad 24/7</h3>
+                  <p className="text-sm leading-relaxed">
+                    Soporte disponible en cualquier momento para resolver tus dudas urgentes.
+                  </p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-semibold">Equipo Experto</h3>
+                  <p className="text-sm leading-relaxed">
+                    Personal calificado con conocimiento profundo del sistema y sus funcionalidades.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                  <Shield className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="mb-2 font-semibold">Soporte Seguro</h3>
+                  <p className="text-sm leading-relaxed">
+                    Canales seguros para proteger tu información y privacidad durante el soporte.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="border-t bg-muted/30 py-12">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+              <div className="flex flex-wrap items-center gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  <span>soporte@checkint.edu</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  <span>+1 (555) 123-4567</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="h-4 w-4" />
+                  <span>Centro de Ayuda</span>
+                </div>
+              </div>
+              <p className="text-sm">&copy; 2025 CHECKiNT. Todos los derechos reservados.</p>
+            </div>
+          </div>
+        </footer>
       </div>
     </Main>
-  );
+  )
 }
