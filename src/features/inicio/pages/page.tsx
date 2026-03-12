@@ -28,15 +28,13 @@ import { ModeToggle } from "../../main/components/mode-toggle"
 
 
 export default function InicioPage() {
+  // Siempre iniciar como no autenticado al cargar la página
   const [authenticated, setAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // Verificar si viene del login (simulando sesión activa)
+  // Limpiar cualquier sesión existente al cargar la página
   useEffect(() => {
-    const fromLogin = sessionStorage.getItem('isLoggedIn');
-    if (fromLogin === 'true') {
-      setAuthenticated(true);
-    }
+    sessionStorage.removeItem('isLoggedIn');
   }, []);
 
   const handleLogout = () => {
@@ -58,7 +56,14 @@ export default function InicioPage() {
         <div className="flex items-center gap-4">
           <ModeToggle />
           
-          {authenticated ? (
+          {!authenticated && (
+            <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
+              <LogIn className="h-4 w-4 mr-2" />
+              Iniciar Sesión
+            </Button>
+          )}
+          
+          {authenticated && (
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg border bg-muted/50">
                 <User className="h-4 w-4 text-muted-foreground" />
@@ -69,11 +74,6 @@ export default function InicioPage() {
                 Cerrar Sesión
               </Button>
             </div>
-          ) : (
-            <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
-              <LogIn className="h-4 w-4 mr-2" />
-              Iniciar Sesión
-            </Button>
           )}
         </div>
       </header>
