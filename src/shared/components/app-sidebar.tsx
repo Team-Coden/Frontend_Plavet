@@ -152,13 +152,13 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Support",
-      url: "#",
+      title: "Ayuda",
+      url: "/support",
       icon: LifeBuoy,
     },
     {
       title: "Feedback",
-      url: "#",
+      url: "/feedback",
       icon: Send,
     },
   ]
