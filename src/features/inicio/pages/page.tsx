@@ -25,7 +25,6 @@ LogIn,
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { ModeToggle } from "../../main/components/mode-toggle"
-import Main from "../../main/pages/page"
 
 
 export default function InicioPage() {
@@ -45,7 +44,7 @@ export default function InicioPage() {
   };
 
   return (
-    <Main>
+    
       <div className="min-h-screen bg-background">
         {/* Header with Authentication */}
         <header className="flex justify-between items-center px-6 py-4 border-b">
@@ -484,6 +483,6 @@ export default function InicioPage() {
             </div>
           </footer>
         </div>
-      </Main>
+      
   )
 }

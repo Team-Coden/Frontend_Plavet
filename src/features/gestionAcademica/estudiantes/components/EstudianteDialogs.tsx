@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +20,7 @@ import {
   SelectValue,
 } from "../../../../shared/components/ui/select";
 import { useState } from "react";
-import type { Estudiante, CreateEstudianteData } from "../types";
+import type { Estudiante, CreateEstudianteData, Genero, EstadoEstudiante, Carrera } from "../types";
 import { CARRERAS } from "../types";
 
 interface CreateEstudianteDialogProps {
@@ -70,14 +71,15 @@ export const CreateEstudianteDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Registrar Nuevo Estudiante</DialogTitle>
+          <DialogTitle>Nuevo Estudiante</DialogTitle>
           <DialogDescription>
-            Ingresa los datos del nuevo estudiante para el sistema.
+            Crea un nuevo registro de estudiante en el sistema.
           </DialogDescription>
         </DialogHeader>
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+            <div>
               <Label htmlFor="nombre">Nombre</Label>
               <Input
                 id="nombre"
@@ -86,7 +88,7 @@ export const CreateEstudianteDialog = ({
                 required
               />
             </div>
-            <div className="space-y-2">
+            <div>
               <Label htmlFor="apellido">Apellido</Label>
               <Input
                 id="apellido"
@@ -97,54 +99,75 @@ export const CreateEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="cedula">Cédula</Label>
-            <Input
-              id="cedula"
-              value={formData.cedula}
-              onChange={(e) => setFormData({ ...formData, cedula: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="telefono">Teléfono</Label>
-            <Input
-              id="telefono"
-              value={formData.telefono}
-              onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="direccion">Dirección</Label>
-            <Input
-              id="direccion"
-              value={formData.direccion}
-              onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
-            />
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+            <div>
+              <Label htmlFor="cedula">Cédula</Label>
+              <Input
+                id="cedula"
+                value={formData.cedula}
+                onChange={(e) => setFormData({ ...formData, cedula: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="telefono">Teléfono</Label>
+              <Input
+                id="telefono"
+                value={formData.telefono}
+                onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="direccion">Dirección</Label>
+              <Input
+                id="direccion"
+                value={formData.direccion}
+                onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="genero">Género</Label>
+              <Select
+                value={formData.genero}
+                onValueChange={(value) => setFormData({ ...formData, genero: value as Genero })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Indistinto">Indistinto</SelectItem>
+                  <SelectItem value="Masculino">Masculino</SelectItem>
+                  <SelectItem value="Femenino">Femenino</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
               <Label htmlFor="carrera">Carrera</Label>
               <Select
                 value={formData.carrera}
-                onValueChange={(value) => setFormData({ ...formData, carrera: value as CreateEstudianteData['carrera'] })}
+                onValueChange={(value) => setFormData({ ...formData, carrera: value as Carrera })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar carrera" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {CARRERAS.map((carrera) => (
@@ -155,37 +178,29 @@ export const CreateEstudianteDialog = ({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+            
+            <div>
               <Label htmlFor="semestre">Semestre</Label>
-              <Input
-                id="semestre"
-                type="number"
-                min="1"
-                max="10"
-                value={formData.semestre}
-                onChange={(e) => setFormData({ ...formData, semestre: parseInt(e.target.value) || 1 })}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="genero">Género</Label>
               <Select
-                value={formData.genero}
-                onValueChange={(value) => setFormData({ ...formData, genero: value as CreateEstudianteData['genero'] })}
+                value={formData.semestre.toString()}
+                onValueChange={(value) => setFormData({ ...formData, semestre: parseInt(value) })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar género" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Indistinto">Indistinto</SelectItem>
-                  <SelectItem value="Masculino">Masculino</SelectItem>
-                  <SelectItem value="Femenino">Femenino</SelectItem>
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((semestre) => (
+                    <SelectItem key={semestre} value={semestre.toString()}>
+                      {semestre}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <Label htmlFor="promedio">Promedio</Label>
               <Input
                 id="promedio"
@@ -194,33 +209,35 @@ export const CreateEstudianteDialog = ({
                 max="20"
                 step="0.1"
                 value={formData.promedio}
-                onChange={(e) => setFormData({ ...formData, promedio: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, promedio: parseFloat(e.target.value) })}
+                required
               />
             </div>
+            <div>
+              <Label htmlFor="estado">Estado</Label>
+              <Select
+                value={formData.estado}
+                onValueChange={(value) => setFormData({ ...formData, estado: value as EstadoEstudiante })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Activo">Activo</SelectItem>
+                  <SelectItem value="Inactivo">Inactivo</SelectItem>
+                  <SelectItem value="Suspendido">Suspendido</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="estado">Estado</Label>
-            <Select
-              value={formData.estado}
-              onValueChange={(value) => setFormData({ ...formData, estado: value as CreateEstudianteData['estado'] })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Activo">Activo</SelectItem>
-                <SelectItem value="Inactivo">Inactivo</SelectItem>
-                <SelectItem value="Suspendido">Suspendido</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit">Crear Estudiante</Button>
+          </DialogFooter>
         </form>
-        <DialogFooter>
-          <Button type="submit" onClick={handleSubmit}>
-            Registrar Estudiante
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -239,17 +256,11 @@ export const EditEstudianteDialog = ({
   estudiante,
   onSubmit,
 }: EditEstudianteDialogProps) => {
-  const [formData, setFormData] = useState<Estudiante | null>(null);
+  const [formData, setFormData] = useState<Estudiante | null>(estudiante);
 
-  // Initialize form data when estudiante changes
-  if (estudiante && !formData) {
+  React.useEffect(() => {
     setFormData(estudiante);
-  }
-  
-  // Reset form when dialog closes
-  if (!open && formData) {
-    setFormData(null);
-  }
+  }, [estudiante]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,24 +278,25 @@ export const EditEstudianteDialog = ({
         <DialogHeader>
           <DialogTitle>Editar Estudiante</DialogTitle>
           <DialogDescription>
-            Modifica los datos del estudiante seleccionado.
+            Modifica la información del estudiante seleccionado.
           </DialogDescription>
         </DialogHeader>
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="nombre">Nombre</Label>
+            <div>
+              <Label htmlFor="edit-nombre">Nombre</Label>
               <Input
-                id="nombre"
+                id="edit-nombre"
                 value={formData.nombre}
                 onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="apellido">Apellido</Label>
+            <div>
+              <Label htmlFor="edit-apellido">Apellido</Label>
               <Input
-                id="apellido"
+                id="edit-apellido"
                 value={formData.apellido}
                 onChange={(e) => setFormData({ ...formData, apellido: e.target.value })}
                 required
@@ -292,54 +304,75 @@ export const EditEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="cedula">Cédula</Label>
-            <Input
-              id="cedula"
-              value={formData.cedula}
-              onChange={(e) => setFormData({ ...formData, cedula: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="telefono">Teléfono</Label>
-            <Input
-              id="telefono"
-              value={formData.telefono}
-              onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="direccion">Dirección</Label>
-            <Input
-              id="direccion"
-              value={formData.direccion}
-              onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
-            />
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="carrera">Carrera</Label>
+            <div>
+              <Label htmlFor="edit-cedula">Cédula</Label>
+              <Input
+                id="edit-cedula"
+                value={formData.cedula}
+                onChange={(e) => setFormData({ ...formData, cedula: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-email">Email</Label>
+              <Input
+                id="edit-email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="edit-telefono">Teléfono</Label>
+              <Input
+                id="edit-telefono"
+                value={formData.telefono}
+                onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-direccion">Dirección</Label>
+              <Input
+                id="edit-direccion"
+                value={formData.direccion}
+                onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label htmlFor="edit-genero">Género</Label>
               <Select
-                value={formData.carrera}
-                onValueChange={(value) => setFormData({ ...formData, carrera: value as CreateEstudianteData['carrera'] })}
+                value={formData.genero}
+                onValueChange={(value) => setFormData({ ...formData, genero: value as Genero })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar carrera" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Indistinto">Indistinto</SelectItem>
+                  <SelectItem value="Masculino">Masculino</SelectItem>
+                  <SelectItem value="Femenino">Femenino</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="edit-carrera">Carrera</Label>
+              <Select
+                value={formData.carrera}
+                onValueChange={(value) => setFormData({ ...formData, carrera: value as Carrera })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {CARRERAS.map((carrera) => (
@@ -350,72 +383,66 @@ export const EditEstudianteDialog = ({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="semestre">Semestre</Label>
-              <Input
-                id="semestre"
-                type="number"
-                min="1"
-                max="10"
-                value={formData.semestre}
-                onChange={(e) => setFormData({ ...formData, semestre: parseInt(e.target.value) || 1 })}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="genero">Género</Label>
+            
+            <div>
+              <Label htmlFor="edit-semestre">Semestre</Label>
               <Select
-                value={formData.genero}
-                onValueChange={(value) => setFormData({ ...formData, genero: value as CreateEstudianteData['genero'] })}
+                value={formData.semestre.toString()}
+                onValueChange={(value) => setFormData({ ...formData, semestre: parseInt(value) })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar género" />
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Indistinto">Indistinto</SelectItem>
-                  <SelectItem value="Masculino">Masculino</SelectItem>
-                  <SelectItem value="Femenino">Femenino</SelectItem>
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((semestre) => (
+                    <SelectItem key={semestre} value={semestre.toString()}>
+                      {semestre}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="promedio">Promedio</Label>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="edit-promedio">Promedio</Label>
               <Input
-                id="promedio"
+                id="edit-promedio"
                 type="number"
                 min="0"
                 max="20"
                 step="0.1"
                 value={formData.promedio}
-                onChange={(e) => setFormData({ ...formData, promedio: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, promedio: parseFloat(e.target.value) })}
+                required
               />
             </div>
+            <div>
+              <Label htmlFor="edit-estado">Estado</Label>
+              <Select
+                value={formData.estado}
+                onValueChange={(value) => setFormData({ ...formData, estado: value as EstadoEstudiante })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Activo">Activo</SelectItem>
+                  <SelectItem value="Inactivo">Inactivo</SelectItem>
+                  <SelectItem value="Suspendido">Suspendido</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="estado">Estado</Label>
-            <Select
-              value={formData.estado}
-              onValueChange={(value) => setFormData({ ...formData, estado: value as CreateEstudianteData['estado'] })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Activo">Activo</SelectItem>
-                <SelectItem value="Inactivo">Inactivo</SelectItem>
-                <SelectItem value="Suspendido">Suspendido</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit">Guardar Cambios</Button>
+          </DialogFooter>
         </form>
-        <DialogFooter>
-          <Button type="submit" onClick={handleSubmit}>
-            Actualizar Estudiante
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -450,11 +477,11 @@ export const ViewEstudianteDialog = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-500">Nombre</label>
-              <p className="text-base">{estudiante.nombre}</p>
+              <p className="text-base font-semibold">{estudiante.nombre}</p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">Apellido</label>
-              <p className="text-base">{estudiante.apellido}</p>
+              <p className="text-base font-semibold">{estudiante.apellido}</p>
             </div>
           </div>
           
@@ -498,7 +525,7 @@ export const ViewEstudianteDialog = ({
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">Promedio</label>
-              <p className="text-base">{estudiante.promedio.toFixed(1)}</p>
+              <p className="text-base font-semibold">{estudiante.promedio.toFixed(1)}</p>
             </div>
           </div>
           

@@ -64,7 +64,7 @@ interface ReportData {
 // Lista de talleres disponibles
 const talleresDisponibles = [
   { id: "desarrollo-web", nombre: "Desarrollo Web" },
-  { id: "diseno-ux", nombre: "Diseño UX" },
+  { id: "diseno-ux", nombre: "Ebanisteria" },
   { id: "marketing-digital", nombre: "Marketing Digital" },
   { id: "data-science", nombre: "Data Science" },
   { id: "movil", nombre: "Desarrollo Móvil" },

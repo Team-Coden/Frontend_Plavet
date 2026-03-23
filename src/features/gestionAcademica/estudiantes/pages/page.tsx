@@ -29,7 +29,7 @@ import {
 } from "../../../../shared/components/ui/table";
 import { Badge } from "../../../../shared/components/ui/badge";
 
-import { useEstudiantes } from "../hooks/useEstudiantes";
+import { useEstudiantes } from "../../estudiantes/hooks/useEstudiantes";
 import { StatsCards } from "../components/StatsCards";
 import { EstudianteTableRow } from "../components/EstudianteTableRow";
 import {
@@ -37,9 +37,9 @@ import {
   EditEstudianteDialog,
   ViewEstudianteDialog,
   DeleteEstudianteDialog, 
-} from "../components/EstudianteDialogs";
+} from "../components/EstudianteDialogs.tsx";
 import type { Estudiante } from "../types";
-import Main from "@/features/main/pages/page";
+import Main from "../../../../features/main/pages/page";
 
 // ==========================================
 // Datos dummy para desarrollo
