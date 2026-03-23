@@ -18,15 +18,55 @@ import { ModeToggle } from "../components/mode-toggle"
 import { useBreadcrumbs } from "../../../shared/hooks/useBreadcrumbs"
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/components/ui/dialog"
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/components/ui/popover"
 import { Button } from "@/shared/components/ui/button"
 import { useNavigate } from "react-router-dom"   
 import { Toaster } from "@/shared/components/ui/sonner"
-import { User, Bell } from "lucide-react"   
+import { User, Bell, CheckCircle, AlertCircle, Info, X } from "lucide-react"   
 
 export default function Main({ children }: { children?: React.ReactNode }) {
   const breadcrumbs = useBreadcrumbs()
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const navigate = useNavigate()
+
+  const exampleNotifications = [
+    {
+      id: 1,
+      type: 'success',
+      title: 'Evaluación Completada',
+      message: 'La evaluación de Juan Pérez ha sido enviada exitosamente.',
+      time: 'Hace 5 minutos',
+      icon: CheckCircle,
+      read: false
+    },
+    {
+      id: 2,
+      type: 'warning',
+      title: 'Pasantía por Vencer',
+      message: 'La pasantía de María González vence en 3 días.',
+      time: 'Hace 1 hora',
+      icon: AlertCircle,
+      read: false
+    },
+    {
+      id: 3,
+      type: 'info',
+      title: 'Nuevo Documento Disponible',
+      message: 'Se ha actualizado el manual de procedimientos.',
+      time: 'Hace 2 horas',
+      icon: Info,
+      read: true
+    },
+    {
+      id: 4,
+      type: 'success',
+      title: 'Reporte Generado',
+      message: 'El reporte mensual está listo para descargar.',
+      time: 'Ayer',
+      icon: CheckCircle,
+      read: true
+    }
+  ]
 
   const handleInicioClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -88,13 +128,68 @@ export default function Main({ children }: { children?: React.ReactNode }) {
           </div>
         </header>
         <div className="absolute top-4 right-4 flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => navigate("/notifications")}
-          >
-            <Bell className="h-4 w-4" />
-          </Button>
+          <Popover>
+            <PopoverTrigger>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="relative"
+              >
+                <Bell className="h-4 w-4" />
+                <span className="absolute -top-1 -right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80 p-0" align="end">
+              <div className="border-b p-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold">Notificaciones</h4>
+                  <Button variant="ghost" size="sm" className="h-auto p-1">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Tienes 2 notificaciones no leídas
+                </p>
+              </div>
+              <div className="max-h-96 overflow-y-auto">
+                {exampleNotifications.map((notification) => {
+                  const IconComponent = notification.icon
+                  return (
+                    <div
+                      key={notification.id}
+                      className={`p-4 border-b cursor-pointer ${
+                        !notification.read ? 'bg-blue-50/50' : ''
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-full ${
+                          notification.type === 'success' ? 'bg-green-100 text-green-600' :
+                          notification.type === 'warning' ? 'bg-yellow-100 text-yellow-600' :
+                          'bg-blue-100 text-blue-600'
+                        }`}>
+                          <IconComponent className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <p className="font-medium text-sm truncate">{notification.title}</p>
+                            {!notification.read && (
+                              <span className="h-2 w-2 bg-blue-500 rounded-full shrink-0"></span>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                            {notification.message}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            {notification.time}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </PopoverContent>
+          </Popover>
           <Button 
             variant="outline" 
             size="sm" 

@@ -7,14 +7,13 @@ import {
   Phone,
   Mail,
   FileText,
-  Video,
-  Download,
   Users,
   Shield,
   Clock,
   CheckCircle,
 } from "lucide-react"
 import Main from "../../main/pages/page"
+import ModuleGuide from "../components/ModuleGuide"
 
 export default function SupportPage() {
   const helpCategories = [
@@ -28,18 +27,6 @@ export default function SupportPage() {
         "Administración de centros",
         "Control de pasantías",
         "Generación de reportes"
-      ]
-    },
-    {
-      icon: Video,
-      title: "Tutoriales en Video",
-      description: "Videos paso a paso para visualizar el funcionamiento de cada módulo.",
-      items: [
-        "Tutorial de registro",
-        "Asignación de pasantías",
-        "Configuración de perfiles",
-        "Uso del dashboard",
-        "Exportación de datos"
       ]
     },
     {
@@ -65,33 +52,6 @@ export default function SupportPage() {
         "FAQ actualizada",
         "Contacto directo"
       ]
-    }
-  ];
-
-  const quickActions = [
-    {
-      icon: BookOpen,
-      title: "Manual Completo",
-      description: "Accede a la documentación completa del sistema",
-      action: () => console.log("Abrir manual")
-    },
-    {
-      icon: Video,
-      title: "Ver Tutoriales",
-      description: "Explora nuestros tutoriales en video",
-      action: () => console.log("Ver tutoriales")
-    },
-    {
-      icon: MessageCircle,
-      title: "Contactar Soporte",
-      description: "Habla con nuestro equipo de soporte",
-      action: () => console.log("Contactar soporte")
-    },
-    {
-      icon: Download,
-      title: "Descargar Recursos",
-      description: "Obtén plantillas y documentos útiles",
-      action: () => console.log("Descargar recursos")
     }
   ];
 
@@ -139,31 +99,10 @@ export default function SupportPage() {
           </div>
         </section>
 
-        {/* Quick Actions */}
-        <section className="py-12 bg-muted/30">
+        {/* Module Guides */}
+        <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-6">
-            <div className="mb-8 text-center">
-              <h2 className="mb-4 text-2xl font-bold tracking-tight">
-                Acciones Rápidas
-              </h2>
-              <p className="mx-auto max-w-2xl text-pretty">
-                Accede directamente a los recursos más solicitados
-              </p>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {quickActions.map((action, index) => (
-                <Card key={index} className="group cursor-pointer transition-all hover:shadow-lg" onClick={action.action}>
-                  <CardHeader className="text-center">
-                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
-                      <action.icon className="h-7 w-7 text-primary" />
-                    </div>
-                    <CardTitle className="text-lg">{action.title}</CardTitle>
-                    <CardDescription>{action.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
-            </div>
+            <ModuleGuide />
           </div>
         </section>
 
