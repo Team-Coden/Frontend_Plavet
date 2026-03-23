@@ -48,7 +48,7 @@ function RoutersProtected() {
         <Route path="/support" element={<SupportPage/>} />
         <Route path="/feedback" element={<FeedbackPage/>} />
         <Route path="/account" element={<AccountPage/>} />
-        
+      
       </Routes>
     </BrowserRouter>
   )
