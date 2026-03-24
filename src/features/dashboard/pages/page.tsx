@@ -16,9 +16,7 @@ import {
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../shared/components/ui/chart"
 import Main from "@/features/main/pages/page"
-import { useEffect } from "react"
-import { driver } from "driver.js"
-import "driver.js/dist/driver.css"
+import { useTour } from "../../../shared/hooks/useTour"
 
 // Sample data for charts
 const performanceData = [
@@ -95,25 +93,12 @@ const upcomingEvents = [
 ]
 
 export default function DashboardPage() {
-  useEffect(() => {
-    const tutorialVisto = localStorage.getItem('tutorial_visto')
-    if (!tutorialVisto) {
-      const driverObj = driver({
-        showProgress: true,
-        nextBtnText: 'Siguiente',
-        prevBtnText: 'Anterior',
-        doneBtnText: 'Finalizar',
-        steps: [
-          { element: '#tour-welcome', popover: { title: 'Bienvenido', description: 'Este es el Panel de Control principal de CHECKiNT.', side: "bottom", align: 'start' }},
-          { element: '#tour-kpis', popover: { title: 'Métricas Clave', description: 'Aquí puedes ver un resumen rápido de estudiantes, centros y pasantías.', side: "right", align: 'start' }},
-          { element: '#tour-chart', popover: { title: 'Tendencia de Crecimiento', description: 'Gráfico interactivo de la evolución mensual de indicadores.', side: "left", align: 'start' }},
-          { element: '#tour-activity', popover: { title: 'Actividad Reciente', description: 'Últimas acciones registradas en el sistema.', side: "top", align: 'start' }},
-        ]
-      });
-      setTimeout(() => driverObj.drive(), 500); // Pequeño delay para asegurar que el DOM esté listo
-      localStorage.setItem('tutorial_visto', 'true');
-    }
-  }, [])
+  useTour('tutorial_visto', [
+    { element: '#tour-welcome', popover: { title: 'Bienvenido', description: 'Este es el Panel de Control principal de CHECKiNT.', side: "bottom", align: 'start' }},
+    { element: '#tour-kpis', popover: { title: 'Métricas Clave', description: 'Aquí puedes ver un resumen rápido de estudiantes, centros y pasantías.', side: "right", align: 'start' }},
+    { element: '#tour-chart', popover: { title: 'Tendencia de Crecimiento', description: 'Gráfico interactivo de la evolución mensual de indicadores.', side: "left", align: 'start' }},
+    { element: '#tour-activity', popover: { title: 'Actividad Reciente', description: 'Últimas acciones registradas en el sistema.', side: "top", align: 'start' }},
+  ], 500);
 
   return (
     <Main>

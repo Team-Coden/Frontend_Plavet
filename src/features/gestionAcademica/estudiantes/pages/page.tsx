@@ -40,6 +40,7 @@ import {
 } from "../components/EstudianteDialogs.tsx";
 import type { Estudiante } from "../types";
 import Main from "../../../../features/main/pages/page";
+import { useTour } from "../../../../shared/hooks/useTour";
 
 // ==========================================
 // Datos dummy para desarrollo
@@ -185,6 +186,14 @@ export default function EstudiantesPage() {
     deleteEstudiante,
   } = useEstudiantes(initialData);
 
+  useTour('tutorial_estudiantes', [
+    { element: '#tour-estudiantes-stats', popover: { title: 'Métricas Rápidas', description: 'Resumen del estado de todos los estudiantes.', side: "bottom" } },
+    { element: '#tour-estudiantes-add', popover: { title: 'Nuevo Estudiante', description: 'Registra un nuevo estudiante en el sistema.', side: "left" } },
+    { element: '#tour-estudiantes-export', popover: { title: 'Exportar Datos', description: 'Descarga la lista actual en formato CSV.', side: "bottom" } },
+    { element: '#tour-estudiantes-filters', popover: { title: 'Búsqueda y Filtros', description: 'Encuentra rápidamente a cualquier estudiante.', side: "bottom" } },
+    { element: '#tour-estudiantes-table', popover: { title: 'Lista de Estudiantes', description: 'Visualiza, edita, da de baja o restaura registros.', side: "top" } }
+  ], 500);
+
   // Estados locales para control de UI
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
@@ -316,14 +325,17 @@ export default function EstudiantesPage() {
           </div>
 
           {/* Stats Cards */}
-          <StatsCards stats={stats} />
+          <div id="tour-estudiantes-stats">
+            <StatsCards stats={stats} />
+          </div>
 
           {/* Main Content */}
           <Card className="border">
             <CardHeader className="border-b bg-muted/30">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col md:flex-row md:items-center gap-2">
                   <Button
+                    id="tour-estudiantes-export"
                     variant="outline"
                     size="sm"
                     onClick={handleExport}
@@ -332,6 +344,7 @@ export default function EstudiantesPage() {
                     <Download className="h-4 w-4" /> Exportar
                   </Button>
                   <Button
+                    id="tour-estudiantes-add"
                     size="sm"
                     onClick={() => setIsDialogOpen(true)}
                     className="gap-2 bg-primary hover:bg-primary/90"
@@ -344,7 +357,7 @@ export default function EstudiantesPage() {
 
             <CardContent className="p-6">
               {/* Search and Filters */}
-              <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <div id="tour-estudiantes-filters" className="flex flex-col md:flex-row gap-4 mb-6">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -376,7 +389,7 @@ export default function EstudiantesPage() {
               {/* Table */}
               {filteredEstudiantes.length > 0 ? (
                 <>
-                  <div className="rounded-lg border overflow-hidden">
+                  <div id="tour-estudiantes-table" className="rounded-lg border overflow-hidden">
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-muted/50">

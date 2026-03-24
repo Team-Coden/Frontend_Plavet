@@ -25,6 +25,7 @@ LogIn,
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { ModeToggle } from "../../main/components/mode-toggle"
+import { useTour } from "../../../shared/hooks/useTour"
 
 
 export default function InicioPage() {
@@ -37,6 +38,17 @@ export default function InicioPage() {
     sessionStorage.removeItem('isLoggedIn');
   }, []);
 
+  // Tutorial de inicio
+  useTour('tutorial_inicio', [
+    { element: '#tour-inicio-header', popover: { title: 'Bienvenidos a CHECKiNT', description: 'Tu sistema integral de gestión de pasantías.', side: "bottom", align: 'start' }},
+    { element: '#tour-inicio-login', popover: { title: 'Acceso Rápido', description: 'Aquí podrás iniciar sesión en tu cuenta en cualquier momento.', side: "bottom", align: 'start' }},
+    { element: '#tour-inicio-welcome', popover: { title: 'Presentación', description: 'Conectamos estudiantes con el mundo laboral.', side: "bottom", align: 'center' }},
+    { element: '#tour-inicio-stats', popover: { title: 'Nuestra Comunidad', description: 'Descubre los increíbles números de impacto de nuestro sistema.', side: "top", align: 'center' }},
+    { element: '#tour-inicio-features', popover: { title: 'Funcionalidades', description: 'Explora todas las herramientas diseñadas para simplificar tus procesos.', side: "top", align: 'center' }},
+    { element: '#tour-inicio-benefits', popover: { title: 'Por qué elegirnos', description: 'Conoce todas las ventajas y beneficios de ser parte de CHECKiNT.', side: "top", align: 'center' }},
+    { element: '#tour-inicio-about', popover: { title: 'Nuestros Valores', description: 'Lee sobre nuestra misión y visión hacia el futuro.', side: "top", align: 'center' }}
+  ], 800);
+
   const handleLogout = () => {
     setAuthenticated(false);
     sessionStorage.removeItem('isLoggedIn');
@@ -47,7 +59,7 @@ export default function InicioPage() {
     
       <div className="min-h-screen bg-background">
         {/* Header with Authentication */}
-        <header className="flex justify-between items-center px-6 py-4 border-b">
+        <header id="tour-inicio-header" className="flex justify-between items-center px-6 py-4 border-b">
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold">
               CHECK<span className="text-primary">iNT</span>
@@ -58,7 +70,7 @@ export default function InicioPage() {
             <ModeToggle />
             
             {!authenticated && (
-              <Button variant="outline" size="sm" onClick={() => navigate('/login')}>
+              <Button id="tour-inicio-login" variant="outline" size="sm" onClick={() => navigate('/login')}>
                 <LogIn className="h-4 w-4 mr-2" />
                 Iniciar Sesión
               </Button>
@@ -80,8 +92,8 @@ export default function InicioPage() {
         </header>
 
         <section
+          id="tour-inicio-welcome"
           className="border-b relative overflow-hidden bg-primary-foreground" > 
-
           <div className="container mx-auto px-6 py-16 lg:py-24 relative z-10">
             <div className="mx-auto max-w-4xl text-center">
               <Badge variant="secondary" className="mb-6 text-sm font-medium">
@@ -100,7 +112,7 @@ export default function InicioPage() {
           </div>
         </section>
 
-        <section className="border-b py-12">
+        <section id="tour-inicio-stats" className="border-b py-12">
           <div className="container mx-auto px-6">
             <div className="grid gap-8 md:grid-cols-3">
               <div className="flex items-center gap-4">
@@ -134,7 +146,7 @@ export default function InicioPage() {
           </div>
         </section>
 
-          <section className="py-20">
+          <section id="tour-inicio-features" className="py-20">
             <div className="container mx-auto px-6">
               <div className="mb-16 text-center">
                 <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
@@ -265,7 +277,7 @@ export default function InicioPage() {
             </div>
           </section>
 
-          <section className="py-20">
+          <section id="tour-inicio-benefits" className="py-20">
             <div className="container mx-auto px-6 ">
               <div className="mb-16 text-center">
                 <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
@@ -355,7 +367,7 @@ export default function InicioPage() {
           </section>
 
           {/* SECCIÓN SOBRE NOSOTROS */}
-          <section className="py-20">
+          <section id="tour-inicio-about" className="py-20">
             <div className="container mx-auto px-6">
               <div className="mb-16 text-center">
                 <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">Sobre Nosotros</h2>

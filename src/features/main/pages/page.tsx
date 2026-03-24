@@ -23,11 +23,18 @@ import { Button } from "@/shared/components/ui/button"
 import { useNavigate } from "react-router-dom"   
 import { Toaster } from "@/shared/components/ui/sonner"
 import { User, Bell, CheckCircle, AlertCircle, Info, X } from "lucide-react"   
+import { useTour } from "../../../shared/hooks/useTour"
 
 export default function Main({ children }: { children?: React.ReactNode }) {
   const breadcrumbs = useBreadcrumbs()
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const navigate = useNavigate()
+
+  useTour('tutorial_main_layout', [
+    { element: '#tour-sidebar', popover: { title: 'Navegación Principal', description: 'Aquí encuentras todos los módulos del sistema organizados por categorías.', side: "right", align: 'start' } },
+    { element: '#tour-notifications', popover: { title: 'Notificaciones', description: 'Mantente al tanto de evaluaciones, documentos pendientes y alertas importantes.', side: "bottom" } },
+    { element: '#tour-profile', popover: { title: 'Tu Perfil', description: 'Configura tu cuenta o cierra tu sesión desde aquí.', side: "bottom" } },
+  ], 800);
 
   const exampleNotifications = [
     {
@@ -79,7 +86,9 @@ export default function Main({ children }: { children?: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <div id="tour-sidebar" className="contents">
+        <AppSidebar />
+      </div>
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2">
           <div className="flex items-center gap-2 px-4">
@@ -131,6 +140,7 @@ export default function Main({ children }: { children?: React.ReactNode }) {
           <Popover>
             <PopoverTrigger>
               <Button 
+                id="tour-notifications"
                 variant="outline" 
                 size="sm" 
                 className="relative"
@@ -191,6 +201,7 @@ export default function Main({ children }: { children?: React.ReactNode }) {
             </PopoverContent>
           </Popover>
           <Button 
+            id="tour-profile"
             variant="outline" 
             size="sm" 
             onClick={() => navigate("/account")}

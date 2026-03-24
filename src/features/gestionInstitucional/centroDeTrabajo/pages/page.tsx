@@ -31,6 +31,7 @@ import { ViewCenterDialog } from "../components/view-center-dialog"
 import { EditCenterDialog } from "../components/edit-center-dialog"
 import type { CentroTrabajo } from "../types"
 import Main from "@/features/main/pages/page"
+import { useTour } from "../../../../shared/hooks/useTour"
 
 export default function CentroDeTrabajoPage() {
   const {
@@ -52,6 +53,14 @@ export default function CentroDeTrabajoPage() {
     restoreCentro,
     permanentlyDeleteCentro,
   } = useCentroTrabajo();
+
+  useTour('tutorial_centros_trabajo', [
+    { element: '#tour-centros-stats', popover: { title: 'Métricas de Centros', description: 'Visión general de las empresas y organizaciones.', side: "bottom" } },
+    { element: '#tour-centros-add', popover: { title: 'Nuevo Centro', description: 'Registra un nuevo centro de trabajo colaborador.', side: "left" } },
+    { element: '#tour-centros-history', popover: { title: 'Historial', description: 'Revisa los centros inactivos o eliminados.', side: "bottom" } },
+    { element: '#tour-centros-export', popover: { title: 'Exportar Datos', description: 'Descarga la lista actual en formato CSV.', side: "bottom" } },
+    { element: '#tour-centros-table', popover: { title: 'Lista de Centros', description: 'Visualiza y gestiona las empresas afiliadas.', side: "top" } }
+  ], 500);
 
   // Estados locales para control de UI
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -156,7 +165,9 @@ export default function CentroDeTrabajoPage() {
           </div>
 
           {/* Stats Cards */}
-          <StatsCards stats={stats} />
+          <div id="tour-centros-stats">
+            <StatsCards stats={stats} />
+          </div>
 
           {/* Main Content */}
           <Card className="border mt-8">
@@ -164,6 +175,7 @@ export default function CentroDeTrabajoPage() {
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div className="flex items-center gap-2">
                   <Button
+                    id="tour-centros-export"
                     variant="outline"
                     size="sm"
                     onClick={handleExport}
@@ -172,6 +184,7 @@ export default function CentroDeTrabajoPage() {
                     <Download className="h-4 w-4" /> Exportar
                   </Button>
                   <Button
+                    id="tour-centros-history"
                     variant="outline"
                     size="sm"
                     onClick={() => setIsHistoryOpen(true)}
@@ -180,6 +193,7 @@ export default function CentroDeTrabajoPage() {
                     Historial
                   </Button>
                   <Button
+                    id="tour-centros-add"
                     size="sm"
                     onClick={() => setIsDialogOpen(true)}
                     className="gap-2 bg-primary hover:bg-primary/90"
@@ -223,7 +237,7 @@ export default function CentroDeTrabajoPage() {
 
               {/* Table */}
               {filteredCentros.length > 0 ? (
-                <>
+                <div id="tour-centros-table">
                   <CentroTable
                     centros={paginatedCentros}
                     onView={handleView}
@@ -293,7 +307,7 @@ export default function CentroDeTrabajoPage() {
                       </div>
                     </div>
                   )}
-                </>
+                </div>
               ) : (
                 <div className="rounded-lg border py-16 text-center">
                   <div className="p-4 rounded-full bg-muted mb-4 inline-block">
