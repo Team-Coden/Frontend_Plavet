@@ -16,6 +16,9 @@ import {
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../../../shared/components/ui/chart"
 import Main from "@/features/main/pages/page"
+import { useEffect } from "react"
+import { driver } from "driver.js"
+import "driver.js/dist/driver.css"
 
 // Sample data for charts
 const performanceData = [
@@ -92,12 +95,32 @@ const upcomingEvents = [
 ]
 
 export default function DashboardPage() {
+  useEffect(() => {
+    const tutorialVisto = localStorage.getItem('tutorial_visto')
+    if (!tutorialVisto) {
+      const driverObj = driver({
+        showProgress: true,
+        nextBtnText: 'Siguiente',
+        prevBtnText: 'Anterior',
+        doneBtnText: 'Finalizar',
+        steps: [
+          { element: '#tour-welcome', popover: { title: 'Bienvenido', description: 'Este es el Panel de Control principal de CHECKiNT.', side: "bottom", align: 'start' }},
+          { element: '#tour-kpis', popover: { title: 'Métricas Clave', description: 'Aquí puedes ver un resumen rápido de estudiantes, centros y pasantías.', side: "right", align: 'start' }},
+          { element: '#tour-chart', popover: { title: 'Tendencia de Crecimiento', description: 'Gráfico interactivo de la evolución mensual de indicadores.', side: "left", align: 'start' }},
+          { element: '#tour-activity', popover: { title: 'Actividad Reciente', description: 'Últimas acciones registradas en el sistema.', side: "top", align: 'start' }},
+        ]
+      });
+      setTimeout(() => driverObj.drive(), 500); // Pequeño delay para asegurar que el DOM esté listo
+      localStorage.setItem('tutorial_visto', 'true');
+    }
+  }, [])
+
   return (
     <Main>
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-6 py-8">
         
-        <div className="mb-8">
+        <div className="mb-8" id="tour-welcome">
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
             Bienvenido al Panel de Control
           </h1>
@@ -109,7 +132,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-7 gap-6 mb-8">
           
           {/* Columna 1: Cuadros de Métricas (KPIs) - Ocupan 4/7 columnas en LG */}
-          <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 gap-6 h-full">
+          <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 gap-6 h-full" id="tour-kpis">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-foreground">Estudiantes Activos</CardTitle>
@@ -164,7 +187,7 @@ export default function DashboardPage() {
           </div>
           
           {/* Columna 2: Gráfico de Crecimiento - Ocupa 3/7 columnas en LG */}
-          <Card className="lg:col-span-3">
+          <Card className="lg:col-span-3" id="tour-chart">
             <CardHeader>
               <CardTitle>Tendencia de Crecimiento</CardTitle>
               <CardDescription>Evolución mensual de indicadores clave</CardDescription>
@@ -254,7 +277,7 @@ export default function DashboardPage() {
         {/* --- SECCIÓN INFERIOR: Actividad y Eventos --- */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Activity */}
-          <Card className="lg:col-span-2">
+          <Card className="lg:col-span-2" id="tour-activity">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>

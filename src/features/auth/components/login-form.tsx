@@ -11,13 +11,18 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate()
-  const [email, setEmail] = useState("")
+  const [cedula, setCedula] = useState("")
   const [password, setPassword] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Aquí iría la lógica de autenticación
-    // Por ahora, guardamos sesión y redirigimos al dashboard
+    // Mockup: Guardar usuario en localStorage
+    const mockUser = {
+      cedula,
+      name: "Usuario Demo",
+      role: "Estudiante",
+    }
+    localStorage.setItem('user', JSON.stringify(mockUser))
     sessionStorage.setItem('isLoggedIn', 'true')
     navigate("/dashboard")
   }
@@ -37,13 +42,13 @@ export function LoginForm({
                 </p>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="cedula">Cédula</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="cedula"
+                  type="text"
+                  placeholder="000-0000000-0"
+                  value={cedula}
+                  onChange={(e) => setCedula(e.target.value)}
                   required
                 />
               </div>
