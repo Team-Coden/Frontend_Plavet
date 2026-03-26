@@ -8,7 +8,7 @@ import {
   AlertCircle,
   Lightbulb,
 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Main from "../../main/pages/page"
 import { FeedbackCard } from "../components/FeedbackCard"
 import { FeedbackForm } from "../components/FeedbackForm"
@@ -33,68 +33,48 @@ export default function FeedbackPage() {
       date: Date
     }>
   } | null>(null)
-  const [feedbacks, setFeedbacks] = useState([
-    {
-      id: '1',
-      title: 'Mejora en el dashboard',
-      description: 'Sería útil tener más filtros en el dashboard principal para encontrar información más rápido.',
-      category: 'mejora',
-      author: 'Usuario Anónimo',
-      date: new Date('2024-03-10'),
-      status: 'en-revisión',
-      votes: 15,
-      replies: [
-        {
-          id: 'r1',
-          author: 'Equipo de Soporte',
-          message: 'Gracias por tu sugerencia. Estamos evaluando implementar filtros avanzados en el dashboard.',
-          date: new Date('2024-03-11')
+  const [feedbacks, setFeedbacks] = useState<Array<{
+    id: string
+    title: string
+    description: string
+    category: string
+    author: string
+    date: Date
+    status: string
+    votes: number
+    replies: Array<{
+      id: string
+      author: string
+      message: string
+      date: Date
+    }>
+    userVote?: 'up' | 'down'
+    upvotes?: number
+    downvotes?: number
+  }>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('plavet_feedbacks')
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return parsed.map((f: any) => ({
+            ...f,
+            date: new Date(f.date),
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            replies: f.replies.map((r: any) => ({ ...r, date: new Date(r.date) }))
+          }))
+        } catch (e) {
+          console.error('Error loading feedbacks from local storage', e)
         }
-      ]
-    },
-    {
-      id: '2',
-      title: 'Error al generar reportes',
-      description: 'El sistema genera un error cuando intento exportar reportes en formato PDF desde la sección de pasantías.',
-      category: 'error',
-      author: 'Usuario Anónimo',
-      date: new Date('2024-03-09'),
-      status: 'resuelto',
-      votes: 8,
-      replies: [
-        {
-          id: 'r2',
-          author: 'Equipo Técnico',
-          message: 'Hemos solucionado el problema. Por favor intenta nuevamente.',
-          date: new Date('2024-03-10')
-        },
-        {
-          id: 'r3',
-          author: 'Usuario Anónimo',
-          message: '¡Funciona perfectamente ahora! Gracias por la rápida solución.',
-          date: new Date('2024-03-10')
-        }
-      ]
-    },
-    {
-      id: '3',
-      title: 'Excelente sistema',
-      description: 'La plataforma es muy intuitiva y ha mejorado mucho nuestra gestión de pasantías.',
-      category: 'sugerencia',
-      author: 'Usuario Anónimo',
-      date: new Date('2024-03-08'),
-      status: 'implementado',
-      votes: 23,
-      replies: [
-        {
-          id: 'r4',
-          author: 'Equipo Plavet',
-          message: '¡Nos alegra saber que te gusta la plataforma! Seguimos trabajando para mejorarla.',
-          date: new Date('2024-03-09')
-        }
-      ]
+      }
     }
-  ])
+    return []
+  })
+
+  useEffect(() => {
+    localStorage.setItem('plavet_feedbacks', JSON.stringify(feedbacks))
+  }, [feedbacks])
 
   const categories = [
     { value: 'all', label: 'Todas', icon: MessageSquare },
@@ -111,11 +91,37 @@ export default function FeedbackPage() {
   })
 
   const handleVote = (feedbackId: string, voteType: 'up' | 'down') => {
-    setFeedbacks(prev => prev.map(feedback => 
-      feedback.id === feedbackId 
-        ? { ...feedback, votes: voteType === 'up' ? feedback.votes + 1 : feedback.votes - 1 }
-        : feedback
-    ))
+    setFeedbacks(prev => prev.map(feedback => {
+      if (feedback.id !== feedbackId) return feedback;
+      
+      let newUpvotes = feedback.upvotes !== undefined ? feedback.upvotes : feedback.votes;
+      let newDownvotes = feedback.downvotes || 0;
+      let newUserVote: 'up' | 'down' | undefined = voteType;
+
+      if (feedback.userVote === voteType) {
+        // User clicked the exact same vote, we want to unvote
+        if (voteType === 'up') newUpvotes--;
+        if (voteType === 'down') newDownvotes--;
+        newUserVote = undefined;
+      } else {
+        // User had voted the opposite, or no previous vote
+        if (voteType === 'up') {
+          newUpvotes++;
+          if (feedback.userVote === 'down') newDownvotes--;
+        } else {
+          newDownvotes++;
+          if (feedback.userVote === 'up') newUpvotes--;
+        }
+      }
+
+      return {
+        ...feedback,
+        upvotes: newUpvotes,
+        downvotes: newDownvotes,
+        votes: newUpvotes - newDownvotes, // keep legacy compat
+        userVote: newUserVote
+      }
+    }))
   }
 
   const handleReply = (feedbackId: string) => {
@@ -123,6 +129,10 @@ export default function FeedbackPage() {
     if (feedback) {
       setSelectedFeedback(feedback)
     }
+  }
+
+  const handleDelete = (feedbackId: string) => {
+    setFeedbacks(prev => prev.filter(f => f.id !== feedbackId))
   }
 
   const handleSubmitReply = (feedbackId: string, replyMessage: string) => {
@@ -230,6 +240,7 @@ export default function FeedbackPage() {
                     categories={categories}
                     onVote={handleVote}
                     onReply={handleReply}
+                    onDelete={handleDelete}
                   />
                 ))
               )}
@@ -256,14 +267,17 @@ export default function FeedbackPage() {
                   const newFeedback = {
                     ...feedback,
                     id: Date.now().toString(),
-                    author: 'Usuario Anónimo',
+                    author: feedback.name || 'Usuario Anónimo',
                     date: new Date(),
                     status: 'en-revisión' as const,
-                    votes: 0,
+                    votes: 1,
+                    upvotes: 1,
+                    downvotes: 0,
                     replies: [],
                     category: feedback.type
                   }
-                  setFeedbacks(prev => [...prev, newFeedback])
+                  // Add the new feedback to the beginning of the list to show up right away
+                  setFeedbacks(prev => [newFeedback, ...prev])
                 }}
               />
             </div>

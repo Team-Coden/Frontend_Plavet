@@ -14,15 +14,21 @@ interface FeedbackFormProps {
     type: string
     title: string
     description: string
+    name: string
+    email: string
   }) => void
 }
 
 export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
   const [formData, setFormData] = useState({
+    name: '',
+    email: '',
     type: '',
     title: '',
     description: ''
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [resultMessage, setResultMessage] = useState("")
 
   const feedbackTypes = [
     { value: 'mejora', label: 'Mejora', icon: TrendingUp },
@@ -31,12 +37,44 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
     { value: 'otro', label: 'Otro', icon: MessageSquare },
   ]
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (formData.type && formData.title && formData.description) {
-      onSubmit(formData)
-      setFormData({ type: '', title: '', description: '' })
+    
+    if (!formData.name || !formData.email || !formData.type || !formData.title || !formData.description) return
+
+    setIsSubmitting(true)
+    setResultMessage("Enviando...")
+
+    const formPayload = new FormData()
+    formPayload.append("access_key", "0f13fe42-1d70-48a0-8db3-920f77d5026f")
+    formPayload.append("name", formData.name)
+    formPayload.append("email", formData.email)
+    formPayload.append("type", formData.type)
+    formPayload.append("title", formData.title)
+    formPayload.append("message", formData.description) // Map description to message field
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formPayload
+      })
+
+      const data = await response.json()
+      if (data.success) {
+        setResultMessage("¡Feedback enviado exitosamente!")
+        onSubmit(formData)
+        setFormData({ name: '', email: '', type: '', title: '', description: '' })
+      } else {
+        setResultMessage("Error al enviar el feedback. Intenta nuevamente.")
+      }
+    } catch {
+      setResultMessage("Error de conexión. Verifica tu internet.")
     }
+
+    setIsSubmitting(false)
+    setTimeout(() => {
+      setResultMessage("")
+    }, 4000)
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -56,6 +94,31 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Nombre</label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="Tu nombre"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Email</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="tu@email.com"
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                required
+              />
+            </div>
+          </div>
+
           <div>
             <label className="block text-sm font-medium mb-2">
               Tipo de Feedback
@@ -106,11 +169,17 @@ export function FeedbackForm({ onSubmit }: FeedbackFormProps) {
           <Button
             type="submit"
             className="w-full"
-            disabled={!formData.type || !formData.title || !formData.description}
+            disabled={isSubmitting || !formData.name || !formData.email || !formData.type || !formData.title || !formData.description}
           >
             <Send className="h-4 w-4 mr-2" />
-            Enviar Feedback
+            {isSubmitting ? "Enviando..." : "Enviar Feedback"}
           </Button>
+
+          {resultMessage && (
+            <p className={`text-center text-sm font-medium mt-2 ${resultMessage.includes('Error') ? 'text-red-500' : 'text-green-600'}`}>
+              {resultMessage}
+            </p>
+          )}
         </form>
       </CardContent>
     </Card>
