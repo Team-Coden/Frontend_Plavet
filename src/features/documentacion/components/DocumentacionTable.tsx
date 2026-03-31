@@ -12,9 +12,9 @@ interface Props {
   documents: Document[]
   filters: DocumentFilters
   onFiltersChange: (filters: Partial<DocumentFilters>) => void
-  onDeleteDocument: (id: string) => void
-  onDownloadDocument: (id: string) => void
-  getStatusBadge: (status: string) => { className: string; text: string; icon: string }
+  onDeleteDocument: (id: number) => void
+  onDownloadDocument: (id: number) => void
+  getStatusBadge: (status: string) => { className: string; text: string; icon?: string }
   isLoading: boolean
 }
 
@@ -40,7 +40,7 @@ export function DocumentacionTable({
   // Reset page when filters change
   const resetPage = () => setCurrentPage(1)
 
-  const handleAction = (action: string, documentId: string) => {
+  const handleAction = (action: string, documentId: number) => {
     switch (action) {
       case "view":
         console.log("Ver documento:", documentId)
@@ -149,19 +149,18 @@ export function DocumentacionTable({
                     </TableCell>
                   </TableRow>
                 ) : paginatedDocuments.map((document) => {
-                  const statusBadge = getStatusBadge(document.status)
+                  const statusBadge = getStatusBadge(document.estado)
                   return (
                     <TableRow key={document.id}>
-                      <TableCell className="font-medium">{document.name}</TableCell>
+                      <TableCell className="font-medium">{document.tipo}</TableCell>
                       <TableCell>
                         <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium">
-                          {document.type}
+                          {document.tipo}
                         </span>
                       </TableCell>
-                      <TableCell>{document.uploadDate}</TableCell>
+                      <TableCell>{document.fecha_creacion.split('T')[0]}</TableCell>
                       <TableCell>
                         <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusBadge.className}`}>
-                          <span className="mr-1">{statusBadge.icon}</span>
                           {statusBadge.text}
                         </span>
                       </TableCell>

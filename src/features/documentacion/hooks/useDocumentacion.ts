@@ -75,7 +75,7 @@ export function useDocumentacion() {
   }
 
   // Manejar eliminación de documento
-  const handleDeleteDocument = async (documentId: string) => {
+  const handleDeleteDocument = async (documentId: number) => {
     if (window.confirm("¿Está seguro que desea eliminar este documento?")) {
       setIsLoading(true)
       try {
@@ -91,7 +91,7 @@ export function useDocumentacion() {
   }
 
   // Manejar descarga de documento
-  const handleDownloadDocument = async (documentId: string) => {
+  const handleDownloadDocument = async (documentId: number) => {
     try {
       await DocumentacionService.downloadDocument(documentId)
       console.log("[v0] Documento descargado exitosamente")
@@ -100,7 +100,7 @@ export function useDocumentacion() {
     }
   }
 
-  const handleUpdateDocumentStatus = async (documentId: string, status: DocumentStatus) => {
+  const handleUpdateDocumentStatus = async (documentId: number, status: DocumentStatus) => {
     setIsLoading(true)
     try {
       const updated = await DocumentacionService.updateDocumentStatus(documentId, status)

@@ -4,9 +4,9 @@ interface Props {
   documents: Document[]
   filters: DocumentFilters
   onFiltersChange: (filters: Partial<DocumentFilters>) => void
-  onDeleteDocument: (id: string) => void
-  onDownloadDocument: (id: string) => void
-  getStatusBadge: (status: string) => { className: string; text: string; icon: string }
+  onDeleteDocument: (id: number) => void
+  onDownloadDocument: (id: number) => void
+  getStatusBadge: (status: string) => { className: string; text: string; icon?: string }
   isLoading: boolean
 }
 
@@ -26,17 +26,16 @@ export function DocumentacionTableSimple({
       ) : (
         <div className="space-y-2">
           {documents.map(doc => {
-            const statusBadge = getStatusBadge(doc.status)
+            const statusBadge = getStatusBadge(doc.estado)
             return (
               <div key={doc.id} className="border p-3 rounded">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="font-medium">{doc.name}</p>
-                    <p className="text-sm text-gray-600">{doc.type} - {doc.uploadedBy}</p>
+                    <p className="font-medium">{doc.tipo}</p>
+                    <p className="text-sm text-gray-600">{doc.tipo} - {doc.uploadedBy}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${statusBadge.className}`}>
-                      <span className="mr-1">{statusBadge.icon}</span>
                       {statusBadge.text}
                     </span>
                     <button 

@@ -16,8 +16,8 @@ interface Props {
 
 export function DocumentacionForm({ selectedFile, onFileChange, onUploadDocument, isLoading }: Props) {
   const [formData, setFormData] = useState<DocumentFormData>({
-    name: "",
-    type: "",
+    id_estudiante: "",
+    tipo: "",
     description: "",
     file: null
   })
@@ -25,12 +25,12 @@ export function DocumentacionForm({ selectedFile, onFileChange, onUploadDocument
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     
-    if (!formData.name.trim()) {
-      alert("Por favor ingrese el nombre del documento")
+    if (!formData.id_estudiante.trim()) {
+      alert("Por favor ingrese el ID del estudiante")
       return
     }
 
-    if (!formData.type) {
+    if (!formData.tipo) {
       alert("Por favor seleccione el tipo de documento")
       return
     }
@@ -41,7 +41,7 @@ export function DocumentacionForm({ selectedFile, onFileChange, onUploadDocument
     }
 
     onUploadDocument({ ...formData, file: selectedFile })
-    setFormData({ name: "", type: "", description: "", file: null })
+    setFormData({ id_estudiante: "", tipo: "", description: "", file: null })
   }
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -61,11 +61,11 @@ export function DocumentacionForm({ selectedFile, onFileChange, onUploadDocument
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Nombre del Documento</label>
+              <label className="text-sm font-medium">ID Estudiante</label>
               <Input
-                value={formData.name}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Ej: Acta de Reunión"
+                value={formData.id_estudiante}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, id_estudiante: e.target.value }))}
+                placeholder="Ej: 1234573"
                 required
               />
             </div>
@@ -73,8 +73,8 @@ export function DocumentacionForm({ selectedFile, onFileChange, onUploadDocument
             <div className="space-y-2">
               <label className="text-sm font-medium">Tipo de Documento</label>
               <Select
-                value={formData.type}
-                onValueChange={(value: string) => setFormData(prev => ({ ...prev, type: value }))}
+                value={formData.tipo}
+                onValueChange={(value: string) => setFormData(prev => ({ ...prev, tipo: value }))}
                 required
               >
                 <SelectTrigger>

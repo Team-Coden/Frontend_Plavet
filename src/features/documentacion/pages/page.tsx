@@ -32,7 +32,7 @@ export default function DocumentacionPage() {
   } = useDocumentacion()
 
   const [selectedOwner, setSelectedOwner] = useState<string | null>(null)
-  const [pdfPreview, setPdfPreview] = useState<{ open: boolean; url: string; title: string; documentId: string } | null>(null)
+  const [pdfPreview, setPdfPreview] = useState<{ open: boolean; url: string; title: string; documentId: number } | null>(null)
 
   const grouped = useMemo(() => {
     const map = new Map<string, Document[]>()
@@ -41,9 +41,9 @@ export default function DocumentacionPage() {
       map.set(key, [...(map.get(key) ?? []), doc])
     }
     return Array.from(map.entries()).map(([owner, docs]) => {
-      const pendientes = docs.filter(d => d.status === "pendiente").length
-      const aprobados = docs.filter(d => d.status === "aprobado").length
-      const rechazados = docs.filter(d => d.status === "rechazado").length
+      const pendientes = docs.filter(d => d.estado === "Pendiente").length
+      const aprobados = docs.filter(d => d.estado === "Validado").length
+      const rechazados = docs.filter(d => d.estado === "Rechazado").length
       return { owner, docs, pendientes, aprobados, rechazados }
     })
   }, [documents])
@@ -80,7 +80,7 @@ export default function DocumentacionPage() {
     }
 
     const escapePdfText = (value: string) => value.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)")
-    const title = `Documento: ${doc.name}`
+    const title = `Documento: ${doc.tipo}`
     const text = escapePdfText(title)
 
     const pdf = `%PDF-1.4\n` +
@@ -94,7 +94,7 @@ export default function DocumentacionPage() {
 
     const blob = new Blob([pdf], { type: "application/pdf" })
     const url = URL.createObjectURL(blob)
-    setPdfPreview({ open: true, url, title: doc.name, documentId: doc.id })
+    setPdfPreview({ open: true, url, title: doc.tipo, documentId: doc.id })
   }
 
   const closePdfPreview = () => {
@@ -271,14 +271,13 @@ export default function DocumentacionPage() {
                       </TableRow>
                     ) : (
                       selectedDocs.map(doc => {
-                        const badge = getStatusBadge(doc.status)
+                        const badge = getStatusBadge(doc.estado)
                         return (
                           <TableRow key={doc.id}>
-                            <TableCell className="font-medium">{doc.name}</TableCell>
-                            <TableCell>{doc.uploadDate}</TableCell>
+                            <TableCell className="font-medium">{doc.tipo}</TableCell>
+                            <TableCell>{doc.fecha_creacion.split('T')[0]}</TableCell>
                             <TableCell>
                               <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${badge.className}`}>
-                                <span className="mr-1">{badge.icon}</span>
                                 {badge.text}
                               </span>
                             </TableCell>
@@ -297,14 +296,17 @@ export default function DocumentacionPage() {
                                   <DropdownMenuItem onClick={() => onDownloadDocument(doc.id)}>
                                     Descargar
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => onUpdateDocumentStatus(doc.id, "pendiente")}>
+                                  <DropdownMenuItem onClick={() => onUpdateDocumentStatus(doc.id, "Pendiente")}>
                                     Marcar Pendiente
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => onUpdateDocumentStatus(doc.id, "aprobado")}>
-                                    Aprobar
+                                  <DropdownMenuItem onClick={() => onUpdateDocumentStatus(doc.id, "Validado")}>
+                                    Validar
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => onUpdateDocumentStatus(doc.id, "rechazado")}>
+                                  <DropdownMenuItem onClick={() => onUpdateDocumentStatus(doc.id, "Rechazado")}>
                                     Rechazar
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => onUpdateDocumentStatus(doc.id, "En Revisión")}>
+                                    Marcar En Revisión
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>

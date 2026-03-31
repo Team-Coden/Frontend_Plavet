@@ -1,13 +1,16 @@
-export type DocumentStatus = "pendiente" | "aprobado" | "rechazado"
+export type DocumentStatus = "Pendiente" | "Validado" | "Rechazado" | "En Revisión"
 
 export interface Document {
-  id: string
-  name: string
-  type: string
-  uploadDate: string
-  status: DocumentStatus
-  size: string
-  uploadedBy: string
+  id: number
+  id_estudiante: string
+  tipo: string
+  storage_path: string
+  bucket: string
+  estado: DocumentStatus
+  fecha_creacion: string
+  // Extra properties to maintain UI design
+  size?: string
+  uploadedBy?: string
   description?: string
 }
 
@@ -19,8 +22,8 @@ export interface DocumentFilters {
 }
 
 export interface DocumentFormData {
-  name: string
-  type: string
+  id_estudiante: string
+  tipo: string
   description: string
   file: File | null
 }
