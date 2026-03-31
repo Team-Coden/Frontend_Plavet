@@ -8,6 +8,7 @@ import PlazasPage from '@/features/gestionInstitucional/plazas/pages/page';
 import TutoresPage from '@/features/gestionInstitucional/tutores/pages/page';
 import DocumentosPage from '@/features/documentacion/pages/page';
 import SubirDocumentosPage from '@/features/documentacion/subir/page';
+import MisDocumentosPage from '@/features/documentacion/mis-documentos/page';
 import EvaluacionesPage from '@/features/evaluaciones/pages/page';
 import CalificacionesPage from '../../features/evaluaciones/calificacion/pages/page';
 import ReportesPage from '@/features/reportes/page';
@@ -34,6 +35,7 @@ function RoutersProtected() {
         <Route path="/plaza" element={<PlazasPage/>} />
         <Route path="/tutores" element={<TutoresPage/>} />
         <Route path="/documentos" element={<DocumentosPage/>} />
+        <Route path="/mis-documentos" element={<MisDocumentosPage/>} />
         <Route path="/subir" element={<SubirDocumentosPage/>} />
         <Route path="/evaluaciones" element={<EvaluacionesPage/>} />
         <Route path="/calificaciones" element={<CalificacionesPage/>} />
