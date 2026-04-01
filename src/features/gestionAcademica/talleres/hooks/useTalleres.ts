@@ -1,78 +1,139 @@
-// ==========================================
-// Hook personalizado para gestión de Talleres
-// ==========================================
+import { useState, useEffect, useMemo, useCallback } from "react";
+import type { Taller, TallerStats, CreateTallerData } from "../types";
+import { talleresService } from "../services/talleresService";
 
-import { useState, useMemo } from "react";
-import type { Taller, TallerStats } from "../types";
+interface UseTalleresReturn {
+  talleres: Taller[];
+  filteredTalleres: Taller[];
+  paginatedTalleres: Taller[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  setCurrentPage: (page: number) => void;
+  resetPage: () => void;
+  stats: TallerStats;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  filterEstado: string;
+  setFilterEstado: (estado: string) => void;
+  addTaller: (data: CreateTallerData) => Promise<void>;
+  updateTaller: (id: number, data: Partial<CreateTallerData>) => Promise<void>;
+  deleteTaller: (id: number) => Promise<void>;
+  isLoading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
 
-export const useTalleres = (initialData: Taller[]) => {
-  const [talleres, setTalleres] = useState<Taller[]>(initialData);
+export const useTalleres = (): UseTalleresReturn => {
+  const [talleres, setTalleres] = useState<Taller[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab] = useState<string>("todos");
   const [filterEstado, setFilterEstado] = useState<string>("todos");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // Filtrado de talleres
-  const filteredTalleres = useMemo(() => {
-    let filtered = talleres;
+  const fetchTalleres = useCallback(async (page: number = 1, search: string = "", estado: string = "todos") => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const params: any = { page, pageSize: 15 };
+      if (search.trim()) params.search = search;
+      if (estado !== "todos") params.estado = estado;
 
-    // Filter by tab (estado)
-    if (activeTab !== "todos") {
-      filtered = filtered.filter((taller) => taller.estado === activeTab);
+      const response = await talleresService.getAll(params);
+      if (response.success) {
+        setTalleres(response.data);
+        setTotalItems(response.pagination.total);
+        setTotalPages(response.pagination.totalPages);
+      } else {
+        setError("Error al cargar los talleres");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Error de conexión con el servidor";
+      setError(msg);
+    } finally {
+      setIsLoading(false);
     }
+  }, []);
 
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (taller) =>
-          taller.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          taller.codigo_titulo.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+  useEffect(() => {
+    fetchTalleres(currentPage, searchTerm, filterEstado);
+  }, [fetchTalleres, currentPage, searchTerm, filterEstado]);
 
-    // Filter by estado
-    if (filterEstado !== "todos") {
-      filtered = filtered.filter((taller) => taller.estado === filterEstado);
-    }
+  // filteredTalleres y paginatedTalleres apuntan a los datos ya paginados del backend
+  const filteredTalleres = talleres;
+  const paginatedTalleres = talleres;
 
-    return filtered;
-  }, [talleres, searchTerm, activeTab, filterEstado]);
+  const stats: TallerStats = useMemo(() => ({
+    total: totalItems,
+    activos: talleres.filter((t) => t.estado === "Activo").length,
+    inactivos: talleres.filter((t) => t.estado === "Inactivo").length,
+    enMantenimiento: talleres.filter((t) => t.estado === "En Mantenimiento").length,
+  }), [talleres, totalItems]);
 
-  // Paginación
-  const paginatedTalleres = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredTalleres.slice(startIndex, endIndex);
-  }, [filteredTalleres, currentPage]);
+  const resetPage = () => setCurrentPage(1);
 
-  const totalPages = Math.ceil(filteredTalleres.length / itemsPerPage);
-
-  // Estadísticas
-  const stats: TallerStats = useMemo(() => {
-    return {
-      total: talleres.length,
-      activos: talleres.filter((t) => t.estado === "Activo").length,
-      inactivos: talleres.filter((t) => t.estado === "Inactivo").length,
-      enMantenimiento: talleres.filter((t) => t.estado === "En Mantenimiento").length,
-    };
-  }, [talleres]);
-
-  // CRUD operations
-  const addTaller = (newTaller: Taller) => {
-    setTalleres([...talleres, newTaller]);
-  };
-
-  const updateTaller = (updatedTaller: Taller) => {
-    setTalleres(talleres.map((t) => (t.id === updatedTaller.id ? updatedTaller : t)));
-  };
-
-  const deleteTaller = (id: number) => {
-    setTalleres(talleres.filter((t) => t.id !== id));
-  };
-
-  const resetPage = () => {
+  const handleSetSearchTerm = (term: string) => {
+    setSearchTerm(term);
     setCurrentPage(1);
+  };
+
+  const handleSetFilterEstado = (estado: string) => {
+    setFilterEstado(estado);
+    setCurrentPage(1);
+  };
+
+  const addTaller = async (data: CreateTallerData) => {
+    setIsLoading(true);
+    try {
+      const response = await talleresService.create(data);
+      if (response.success) {
+        await fetchTalleres(currentPage, searchTerm, filterEstado);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Error al crear el taller";
+      setError(msg);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateTaller = async (id: number, data: Partial<CreateTallerData>) => {
+    setIsLoading(true);
+    try {
+      const response = await talleresService.update(id, data);
+      if (response.success) {
+        await fetchTalleres(currentPage, searchTerm, filterEstado);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Error al actualizar el taller";
+      setError(msg);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteTaller = async (id: number) => {
+    setIsLoading(true);
+    try {
+      const response = await talleresService.delete(id);
+      if (response.success) {
+        // Si era el último item de la página, retroceder una página
+        const newPage = talleres.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage;
+        setCurrentPage(newPage);
+        await fetchTalleres(newPage, searchTerm, filterEstado);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Error al eliminar el taller";
+      setError(msg);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return {
@@ -81,15 +142,19 @@ export const useTalleres = (initialData: Taller[]) => {
     paginatedTalleres,
     currentPage,
     totalPages,
+    totalItems,
     setCurrentPage,
     resetPage,
     stats,
     searchTerm,
-    setSearchTerm,
+    setSearchTerm: handleSetSearchTerm,
     filterEstado,
-    setFilterEstado,
+    setFilterEstado: handleSetFilterEstado,
     addTaller,
     updateTaller,
     deleteTaller,
+    isLoading,
+    error,
+    refetch: () => fetchTalleres(currentPage, searchTerm, filterEstado),
   };
 };

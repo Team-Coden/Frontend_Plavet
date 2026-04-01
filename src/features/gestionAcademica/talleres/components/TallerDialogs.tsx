@@ -2,7 +2,7 @@
 // Componentes de diálogo para Talleres
 // ==========================================
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../../../../shared/components/ui/button";
 import {
   Dialog,
@@ -21,9 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../../shared/components/ui/select";
-import type { Taller } from "../types";
+import type { Taller, CreateTallerData } from "../types";
 
-// Estados disponibles
 const ESTADOS = [
   "Activo",
   "Inactivo",
@@ -36,7 +35,7 @@ const ESTADOS = [
 interface CreateTallerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: Taller) => void;
+  onSubmit: (data: CreateTallerData) => Promise<void>;
 }
 
 export const CreateTallerDialog = ({
@@ -53,13 +52,15 @@ export const CreateTallerDialog = ({
     id: 0,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newTaller: Taller = {
-      ...formData,
-      id: Date.now(),
-    } as Taller;
-    onSubmit(newTaller);
+    const newTaller: CreateTallerData = {
+      nombre: formData.nombre || "",
+      id_familia: formData.id_familia || "",
+      codigo_titulo: formData.codigo_titulo || "",
+      horas_pasantia: formData.horas_pasantia || 0,
+    };
+    await onSubmit(newTaller);
     setFormData({
       nombre: "",
       id_familia: "",
@@ -68,7 +69,6 @@ export const CreateTallerDialog = ({
       estado: "Activo",
       id: 0,
     });
-    onOpenChange(false);
   };
 
   return (
@@ -92,11 +92,13 @@ export const CreateTallerDialog = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="id_familia">Familia</Label>
+              <Label htmlFor="id_familia">Familia (3 caracteres)</Label>
               <Input
                 id="id_familia"
                 value={formData.id_familia || ""}
-                onChange={(e) => setFormData({ ...formData, id_familia: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, id_familia: e.target.value.toUpperCase() })}
+                maxLength={3}
+                placeholder="Ej. MEC"
                 required
               />
             </div>
@@ -108,7 +110,9 @@ export const CreateTallerDialog = ({
               <Input
                 id="codigo_titulo"
                 value={formData.codigo_titulo || ""}
-                onChange={(e) => setFormData({ ...formData, codigo_titulo: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, codigo_titulo: e.target.value.toUpperCase() })}
+                maxLength={8}
+                placeholder="Ej. MEC001_3"
                 required
               />
             </div>
@@ -123,25 +127,6 @@ export const CreateTallerDialog = ({
                 required
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="estado">Estado</Label>
-            <Select
-              value={formData.estado || "Activo"}
-              onValueChange={(value) => setFormData({ ...formData, estado: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar estado" />
-              </SelectTrigger>
-              <SelectContent>
-                {ESTADOS.map((estado) => (
-                  <SelectItem key={estado} value={estado}>
-                    {estado}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <DialogFooter>
@@ -254,7 +239,7 @@ export const ViewTallerDialog = ({ open, onOpenChange, taller }: ViewTallerDialo
 interface EditTallerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: Taller) => void;
+  onSubmit: (id: number, data: Partial<CreateTallerData>) => Promise<void>;
   taller: Taller | null;
   allTalleres: Taller[];
 }
@@ -262,29 +247,35 @@ interface EditTallerDialogProps {
 export const EditTallerDialog = ({ open, onOpenChange, onSubmit, taller, allTalleres }: EditTallerDialogProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showTallerSelector, setShowTallerSelector] = useState(false);
-  
-  // Usar key para resetear el formulario cuando el taller cambia
   const [formData, setFormData] = useState<Partial<Taller>>(taller || {});
 
-  // Filtrar talleres para el selector
+  useEffect(() => {
+    if (taller) {
+      setFormData(taller);
+    }
+  }, [taller]);
+
   const filteredTalleres = allTalleres.filter(t =>
     t.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.codigo_titulo.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Cambiar a un taller diferente
   const handleSelectTaller = (selectedTaller: Taller) => {
     setFormData(selectedTaller);
     setShowTallerSelector(false);
     setSearchTerm("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (taller) {
-      const updatedTaller: Taller = { ...formData, id: taller.id } as Taller;
-      onSubmit(updatedTaller);
-      onOpenChange(false);
+      const updatedData: Partial<CreateTallerData> = {
+        nombre: formData.nombre,
+        id_familia: formData.id_familia,
+        codigo_titulo: formData.codigo_titulo,
+        horas_pasantia: formData.horas_pasantia,
+      };
+      await onSubmit(taller.id, updatedData);
     }
   };
 
@@ -292,15 +283,14 @@ export const EditTallerDialog = ({ open, onOpenChange, onSubmit, taller, allTall
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto" key={taller?.id}>
+      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Editar Taller</DialogTitle>
           <DialogDescription>
             Modifica los datos del taller seleccionado o busca otro taller para editar.
           </DialogDescription>
         </DialogHeader>
-        
-        {/* Selector de Taller */}
+
         <div className="mb-6 p-4 border rounded-lg bg-muted/30">
           <div className="flex items-center justify-between mb-3">
             <Label className="text-sm font-medium">Buscar y Seleccionar Taller</Label>
@@ -313,7 +303,7 @@ export const EditTallerDialog = ({ open, onOpenChange, onSubmit, taller, allTall
               {showTallerSelector ? "Ocultar" : "Mostrar"} Selector
             </Button>
           </div>
-          
+
           {showTallerSelector && (
             <div className="space-y-3">
               <Input
@@ -322,7 +312,6 @@ export const EditTallerDialog = ({ open, onOpenChange, onSubmit, taller, allTall
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
               />
-              
               {searchTerm && (
                 <div className="max-h-40 overflow-y-auto border rounded-md">
                   {filteredTalleres.length > 0 ? (
@@ -347,8 +336,7 @@ export const EditTallerDialog = ({ open, onOpenChange, onSubmit, taller, allTall
               )}
             </div>
           )}
-          
-          {/* Taller Actual */}
+
           <div className="mt-3 p-3 bg-background rounded border">
             <div className="text-sm font-medium text-muted-foreground">Taller Actual:</div>
             <div className="font-medium">{formData.nombre || "No seleccionado"}</div>
@@ -367,11 +355,12 @@ export const EditTallerDialog = ({ open, onOpenChange, onSubmit, taller, allTall
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="edit_id_familia">Familia</Label>
+              <Label htmlFor="edit_id_familia">Familia (3 caracteres)</Label>
               <Input
                 id="edit_id_familia"
                 value={formData.id_familia || ""}
-                onChange={(e) => setFormData({ ...formData, id_familia: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, id_familia: e.target.value.toUpperCase() })}
+                maxLength={3}
                 required
               />
             </div>
@@ -383,7 +372,8 @@ export const EditTallerDialog = ({ open, onOpenChange, onSubmit, taller, allTall
               <Input
                 id="edit_codigo_titulo"
                 value={formData.codigo_titulo || ""}
-                onChange={(e) => setFormData({ ...formData, codigo_titulo: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, codigo_titulo: e.target.value.toUpperCase() })}
+                maxLength={8}
                 required
               />
             </div>
@@ -398,25 +388,6 @@ export const EditTallerDialog = ({ open, onOpenChange, onSubmit, taller, allTall
                 required
               />
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="edit_estado">Estado</Label>
-            <Select
-              value={formData.estado || "Activo"}
-              onValueChange={(value) => setFormData({ ...formData, estado: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar estado" />
-              </SelectTrigger>
-              <SelectContent>
-                {ESTADOS.map((estado) => (
-                  <SelectItem key={estado} value={estado}>
-                    {estado}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <DialogFooter>
