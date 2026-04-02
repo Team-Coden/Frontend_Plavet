@@ -1,47 +1,37 @@
-// ==========================================
-// Servicio para el módulo de Autenticación
-// Conecta con: /api/auth
-// ==========================================
-
 import { apiClient } from "../../../lib/api";
-import type { ApiResponse } from "../../../lib/api";
 
 export interface LoginCredentials {
-  email: string;
+  cedula: string;
   password: string;
 }
 
 export interface AuthUser {
   id: number;
-  nombre: string;
+  username: string;
   email: string;
+  id_rol: number;
   rol: string;
+  estado: string;
+  tenant: string;
 }
 
 export interface AuthTokens {
   accessToken: string;
-  refreshToken?: string;
+  refreshToken: string;
 }
 
 export interface LoginResponse {
   user: AuthUser;
-  tokens: AuthTokens;
+  accessToken: string;
+  refreshToken: string;
 }
 
 export const authService = {
-  login: async (credentials: LoginCredentials): Promise<ApiResponse<LoginResponse>> => {
-    return apiClient.post<ApiResponse<LoginResponse>>("/api/auth/login", credentials);
+  login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
+    return apiClient.post<LoginResponse>("/api/auth/login", credentials);
   },
 
-  logout: async (): Promise<ApiResponse<void>> => {
-    return apiClient.post<ApiResponse<void>>("/api/auth/logout", {});
-  },
-
-  refreshToken: async (refreshToken: string): Promise<ApiResponse<AuthTokens>> => {
-    return apiClient.post<ApiResponse<AuthTokens>>("/api/auth/refresh", { refreshToken });
-  },
-
-  me: async (): Promise<ApiResponse<AuthUser>> => {
-    return apiClient.get<ApiResponse<AuthUser>>("/api/auth/me");
+  logout: async (): Promise<void> => {
+    return apiClient.post<void>("/api/auth/logout", {});
   },
 };

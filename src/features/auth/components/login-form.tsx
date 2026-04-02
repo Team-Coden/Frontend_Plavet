@@ -6,6 +6,7 @@ import { Label } from "../../../shared/components/ui/label"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { useTour } from "../../../shared/hooks/useTour"
+import { authService } from "../services/authService"
 
 export function LoginForm({
   className,
@@ -14,6 +15,8 @@ export function LoginForm({
   const navigate = useNavigate()
   const [cedula, setCedula] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   useTour('tutorial_login', [
     { element: '#login-card', popover: { title: 'Acceso Seguro', description: 'Ingresa tus credenciales para administrar tus pasantías.', side: "top" } },
@@ -22,17 +25,27 @@ export function LoginForm({
     { element: '#btn-login', popover: { title: 'Adelante', description: 'Haz clic para entrar cuando estés listo.', side: "bottom" } },
   ], 500);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Mockup: Guardar usuario en localStorage
-    const mockUser = {
-      cedula,
-      name: "Usuario Demo",
-      role: "Estudiante",
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await authService.login({ cedula, password })
+      
+      // Guardar información del usuario
+      localStorage.setItem('user', JSON.stringify(response.user))
+      sessionStorage.setItem('isLoggedIn', 'true')
+      localStorage.setItem('accessToken', response.accessToken)
+      localStorage.setItem('refreshToken', response.refreshToken)
+      localStorage.setItem('tenant', response.user.tenant)
+      
+      navigate("/dashboard")
+    } catch (err: any) {
+      setError(err.message || "Error al iniciar sesión. Verifica tus credenciales.")
+    } finally {
+      setLoading(false)
     }
-    localStorage.setItem('user', JSON.stringify(mockUser))
-    sessionStorage.setItem('isLoggedIn', 'true')
-    navigate("/dashboard")
   }
 
   return (
@@ -50,6 +63,11 @@ export function LoginForm({
                   Sistema de Gestión de Pasantías y Empleabilidad
                 </p>
               </div>
+              {error && (
+                <div className="text-sm font-medium text-destructive text-center">
+                  {error}
+                </div>
+              )}
               <div id="cedula-group" className="grid gap-2">
                 <Label htmlFor="cedula">Cédula</Label>
                 <Input
@@ -79,8 +97,8 @@ export function LoginForm({
                   required 
                 />
               </div>
-              <Button id="btn-login" type="submit" className="w-full">
-                Login
+              <Button id="btn-login" type="submit" className="w-full" disabled={loading}>
+                {loading ? "Cargando..." : "Login"}
               </Button>
               
             </div>
