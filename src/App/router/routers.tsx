@@ -10,6 +10,7 @@ import DocumentosPage from '@/features/documentacion/pages/page';
 import SubirDocumentosPage from '@/features/documentacion/subir/page';
 import MisDocumentosPage from '@/features/documentacion/mis-documentos/page';
 import EvaluacionesPage from '@/features/evaluaciones/pages/page';
+import MisCalificacionesPage from '@/features/evaluaciones/mis-calificaciones/page';
 import CalificacionesPage from '../../features/evaluaciones/calificacion/pages/page';
 import ReportesPage from '@/features/reportes/page';
 import CierrePasantiasPage from '@/features/procesoDePasantias/cierreDePasantias/pages/page';
@@ -38,6 +39,7 @@ function RoutersProtected() {
         <Route path="/mis-documentos" element={<MisDocumentosPage/>} />
         <Route path="/subir" element={<SubirDocumentosPage/>} />
         <Route path="/evaluaciones" element={<EvaluacionesPage/>} />
+        <Route path="/mis-calificaciones" element={<MisCalificacionesPage/>} />
         <Route path="/calificaciones" element={<CalificacionesPage/>} />
         <Route path="/reportes" element={<ReportesPage/>} />
         <Route path="/gestionDePasantias" element={<GestionPasantiasPage/>} />

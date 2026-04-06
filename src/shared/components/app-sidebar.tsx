@@ -123,6 +123,10 @@ const data = {
           url: "/evaluaciones",
         },
         {
+          title: "Mis Calificaciones",
+          url: "/mis-calificaciones",
+        },
+        {
           title: "Calificaciones",
           url: "/calificaciones",
         }

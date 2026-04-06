@@ -1,4 +1,4 @@
-export type Genero = "Indistinto" | "Masculino" | "Femenino";
+export type Genero = "Masculino" | "Femenino";
 export type EstadoEstudiante = "Activo" | "Inactivo" | "Suspendido";
 
 export const CARRERAS = [
