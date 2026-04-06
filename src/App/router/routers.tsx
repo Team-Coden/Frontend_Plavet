@@ -23,6 +23,7 @@ import TalleresPage from '@/features/gestionAcademica/talleres/pages/page';
 import SupportPage from '@/features/support/pages/page';
 import FeedbackPage from '@/features/feedback/pages/page';
 import AccountPage from '@/features/account/pages/page';
+import UsuariosPage from '@/features/rolesYpersonal/usuarios/pages/page';
 
 function RoutersProtected() {
   return (
@@ -52,6 +53,7 @@ function RoutersProtected() {
         <Route path="/support" element={<SupportPage/>} />
         <Route path="/feedback" element={<FeedbackPage/>} />
         <Route path="/account" element={<AccountPage/>} />
+        <Route path="/usuarios" element={<UsuariosPage/>} />
       
       </Routes>
     </BrowserRouter>

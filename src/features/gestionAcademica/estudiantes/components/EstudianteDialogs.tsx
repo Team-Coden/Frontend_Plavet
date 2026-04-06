@@ -153,7 +153,6 @@ export const CreateEstudianteDialog = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Indistinto">Indistinto</SelectItem>
                   <SelectItem value="Masculino">Masculino</SelectItem>
                   <SelectItem value="Femenino">Femenino</SelectItem>
                 </SelectContent>
@@ -358,7 +357,6 @@ export const EditEstudianteDialog = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Indistinto">Indistinto</SelectItem>
                   <SelectItem value="Masculino">Masculino</SelectItem>
                   <SelectItem value="Femenino">Femenino</SelectItem>
                 </SelectContent>

@@ -91,6 +91,10 @@ const data = {
         {
           title: "Vinculadores",
           url: "/vinculadores",
+        },
+        {
+          title: "Usuarios",
+          url: "/usuarios",
         }
       ],
     },
