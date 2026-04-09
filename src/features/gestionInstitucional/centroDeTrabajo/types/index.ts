@@ -10,8 +10,8 @@ export interface CentroTrabajo {
   createdAt: string;
   deletedAt?: string;
   // Additional fields for backend integration
-  id_direccion?: number;
-  id_contacto?: number;
+  direccion?: string;
+  contacto?: string;
   restriccion_edad?: boolean;
   id_usuario?: number | null;
   validacion?: string | null;
