@@ -40,6 +40,7 @@ export const CreatePlazaDialog = ({
   open,
   onOpenChange,
   onSubmit,
+  centros,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
@@ -78,6 +79,7 @@ export const CreatePlazaDialog = ({
           <PlazaForm
             formData={formData}
             onChange={(d) => setFormData(d as CreatePlazaData)}
+            centros={centros}
           />
           <DialogFooter>
             <Button
@@ -104,6 +106,7 @@ export const EditPlazaDialog = ({
   onOpenChange,
   plaza,
   onSubmit,
+  centros,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
@@ -145,6 +148,7 @@ export const EditPlazaDialog = ({
                 formData={formData}
                 onChange={(d) => setFormData(d as Plaza)}
                 isEditing
+                centros={centros}
               />
 
 

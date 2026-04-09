@@ -9,85 +9,65 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../../shared/components/ui/select";
-import { Briefcase, Search } from "lucide-react";
-import type { Plaza, Genero, EstadoPlaza } from "../types";
+import { Briefcase } from "lucide-react";
+import type { Plaza, Genero, EstadoPlaza, Taller } from "../types";
 import { TALLERES } from "../types";
-import { useState } from "react";
-
 interface PlazaFormProps {
   formData: Partial<Plaza>;
   onChange: (data: Partial<Plaza>) => void;
   isEditing?: boolean;
+  centros?: string[];
 }
 
 export const PlazaForm = ({
   formData,
   onChange,
   isEditing = false,
+  centros = [],
 }: PlazaFormProps) => {
-  const [tallerSearch, setTallerSearch] = useState("");
 
-  const filteredTalleres = TALLERES.filter((taller) =>
-    taller.toLowerCase().includes(tallerSearch.toLowerCase())
-  );
+
 
   return (
     <div className="space-y-4 py-4">
-      {/* Centro de Trabajo - Ahora es buscador */}
+      {/* Centro de Trabajo - Ahora es select */}
       <div className="space-y-2">
         <Label htmlFor="centro">Centro de Trabajo</Label>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="centro"
-            className="pl-10"
-            value={formData.centro || ""}
-            onChange={(e) => onChange({ ...formData, centro: e.target.value })}
-            placeholder="Buscar centro de trabajo..."
-          />
-        </div>
+        <Select
+          value={formData.centro || ""}
+          onValueChange={(v) => onChange({ ...formData, centro: v })}
+        >
+          <SelectTrigger id="centro">
+            <SelectValue placeholder="Seleccione un centro de trabajo" />
+          </SelectTrigger>
+          <SelectContent>
+            {centros.map((centro) => (
+              <SelectItem key={centro} value={centro}>
+                {centro}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Taller - Ahora es buscador con selección */}
+      {/* Taller - Ahora es select */}
       <div className="space-y-2">
         <Label htmlFor="taller">Taller</Label>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="taller"
-            className="pl-10"
-            value={tallerSearch}
-            onChange={(e) => setTallerSearch(e.target.value)}
-            placeholder="Buscar taller por nombre..."
-          />
-        </div>
-        {tallerSearch && (
-          <div className="border rounded-md max-h-32 overflow-y-auto">
-            {filteredTalleres.length > 0 ? (
-              filteredTalleres.map((taller) => (
-                <div
-                  key={taller}
-                  className="px-3 py-2 hover:bg-muted cursor-pointer text-sm"
-                  onClick={() => {
-                    onChange({ ...formData, taller });
-                    setTallerSearch(taller);
-                  }}
-                >
-                  {taller}
-                </div>
-              ))
-            ) : (
-              <div className="px-3 py-2 text-sm text-muted-foreground">
-                No se encontraron talleres
-              </div>
-            )}
-          </div>
-        )}
-        {formData.taller && !tallerSearch && (
-          <div className="text-sm text-muted-foreground">
-            Seleccionado: <span className="font-medium">{formData.taller}</span>
-          </div>
-        )}
+        <Select
+          value={formData.taller || ""}
+          onValueChange={(v) => onChange({ ...formData, taller: v as Taller })}
+        >
+          <SelectTrigger id="taller">
+            <SelectValue placeholder="Seleccione un taller" />
+          </SelectTrigger>
+          <SelectContent>
+            {TALLERES.map((taller) => (
+              <SelectItem key={taller} value={taller}>
+                {taller}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Nombre de Plaza */}
