@@ -1,8 +1,3 @@
-// ==========================================
-// Cliente HTTP global para comunicación con el backend
-// Base URL: https://backend-check-in-gik5.onrender.com
-// ==========================================
-
 export const API_BASE_URL = "https://backend-check-in-gik5.onrender.com";
 
 export interface ApiResponse<T> {
@@ -35,6 +30,15 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
+private getAuthHeaders(): Record<string, string> {
+  const token = localStorage.getItem("accessToken"); // ← cambiar "token" por "accessToken"
+  return {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
+
   private async handleResponse<T>(response: Response): Promise<T> {
     if (!response.ok) {
       const errorData: ApiError = await response.json().catch(() => ({
@@ -57,10 +61,7 @@ class ApiClient {
     }
     const response = await fetch(url.toString(), {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers: this.getAuthHeaders(),
     });
     return this.handleResponse<T>(response);
   }
@@ -68,10 +69,7 @@ class ApiClient {
   async post<T>(endpoint: string, body: unknown): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(body),
     });
     return this.handleResponse<T>(response);
@@ -80,10 +78,7 @@ class ApiClient {
   async put<T>(endpoint: string, body: unknown): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(body),
     });
     return this.handleResponse<T>(response);
@@ -92,10 +87,7 @@ class ApiClient {
   async patch<T>(endpoint: string, body: unknown): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers: this.getAuthHeaders(),
       body: JSON.stringify(body),
     });
     return this.handleResponse<T>(response);
@@ -104,14 +96,10 @@ class ApiClient {
   async delete<T>(endpoint: string): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers: this.getAuthHeaders(),
     });
     return this.handleResponse<T>(response);
   }
 }
 
-// Instancia singleton del cliente API
 export const apiClient = new ApiClient(API_BASE_URL);

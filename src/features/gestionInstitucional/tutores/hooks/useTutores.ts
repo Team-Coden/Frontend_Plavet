@@ -1,95 +1,118 @@
 'use client';
 
-import { useState, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { Tutor, TutorStats, CreateTutorData } from "../types";
-import { initialTutorData } from "../types/mockData";
+import { tutorService } from "../services/tutorService";
 
 export const useTutores = () => {
-  const [tutores, setTutores] = useState<Tutor[]>(initialTutorData);
+  const [paginatedTutores, setPaginatedTutores] = useState<Tutor[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [stats, setStats] = useState<TutorStats>({ total: 0, activos: 0, pendientes: 0, inhabilitados: 0 });
   const itemsPerPage = 15;
 
-  // Filter logic
-  const filteredTutores = useMemo(() => {
-    return tutores.filter((tutor) => {
-      const matchesSearch =
-        tutor.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tutor.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tutor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tutor.especialidadTecnica.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        tutor.areaAsignada.toLowerCase().includes(searchTerm.toLowerCase());
+  const fetchTutores = useCallback(async () => {
+    try {
+      const response = await tutorService.getTutoresPaginated(
+        currentPage,
+        itemsPerPage,
+        {
+          search: searchTerm || undefined,
+          status: statusFilter,
+        }
+      );
+      if (response.success) {
+        setPaginatedTutores(response.data);
+        setTotalPages(response.pagination?.totalPages || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching tutores:", error);
+    }
+  }, [currentPage, searchTerm, statusFilter]);
 
-      const matchesStatus =
-        statusFilter === "todos" || tutor.status === statusFilter;
+  const fetchStats = useCallback(async () => {
+    try {
+      const data = await tutorService.getTutoresStats();
+      setStats(data);
+    } catch (error) {
+      console.error("Error fetching tutores stats:", error);
+    }
+  }, []);
 
-      return matchesSearch && matchesStatus;
-    });
-  }, [tutores, searchTerm, statusFilter]);
+  const fetchAllForExport = useCallback(async () => {
+    try {
+      return await tutorService.exportTutoresToCSV({
+        status: statusFilter,
+      });
+    } catch (error) {
+      console.error("Error fetching export:", error);
+      return null;
+    }
+  }, [statusFilter]);
 
-  // Pagination logic
-  const paginatedTutores = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredTutores.slice(startIndex, endIndex);
-  }, [filteredTutores, currentPage]);
-
-  const totalPages = Math.ceil(filteredTutores.length / itemsPerPage);
+  useEffect(() => {
+    fetchTutores();
+    fetchStats();
+  }, [fetchTutores, fetchStats]);
 
   const resetPage = () => {
     setCurrentPage(1);
   };
 
-  // Stats calculation
-  const stats: TutorStats = useMemo(() => {
-    return {
-      total: tutores.length,
-      activos: tutores.filter(t => t.status === "active").length,
-      pendientes: tutores.filter(t => t.status === "pending").length,
-      inhabilitados: tutores.filter(t => t.status === "deleted").length,
-    };
-  }, [tutores]);
-
-  // CRUD operations
-  const addTutor = (newTutor: CreateTutorData) => {
-    const tutor: Tutor = {
-      ...newTutor,
-      id: `T-${Date.now()}`,
-      status: "pending",
-    };
-    setTutores([...tutores, tutor]);
+  const addTutor = async (newTutor: CreateTutorData) => {
+    try {
+      await tutorService.createTutor(newTutor);
+      fetchTutores();
+      fetchStats();
+    } catch (error) {
+      console.error("Error creating tutor:", error);
+    }
   };
 
-  const updateTutor = (updatedTutor: Tutor) => {
-    setTutores(tutores.map((t) => (t.id === updatedTutor.id ? updatedTutor : t)));
+  const updateTutor = async (updatedTutor: Tutor) => {
+    try {
+      await tutorService.updateTutor(updatedTutor.id, updatedTutor);
+      fetchTutores();
+    } catch (error) {
+      console.error("Error updating tutor:", error);
+    }
   };
 
-  const formatDate = (date?: Date) => date?.toLocaleDateString('es-ES');
-
-  const deleteTutor = (id: string) => {
-    setTutores(
-      tutores.map((t) =>
-        t.id === id ? { ...t, status: "deleted", deletedAt: formatDate(new Date()) } : t
-      )
-    );
+  const deleteTutor = async (id: string) => {
+    try {
+      await tutorService.deleteTutor(id);
+      fetchTutores();
+      fetchStats();
+    } catch (error) {
+      console.error("Error deleting tutor:", error);
+    }
   };
 
-  const restoreTutor = (id: string) => {
-    setTutores(
-      tutores.map((t) =>
-        t.id === id ? { ...t, status: "active", deletedAt: undefined } : t
-      )
-    );
+  const restoreTutor = async (id: string) => {
+    try {
+      await tutorService.restoreTutor(id);
+      fetchTutores();
+      fetchStats();
+    } catch (error) {
+      console.error("Error restoring tutor:", error);
+    }
   };
 
-  const permanentlyDeleteTutor = (id: string) => {
-    setTutores(tutores.filter((t) => t.id !== id));
+  const permanentlyDeleteTutor = async (id: string) => {
+    try {
+      await tutorService.permanentlyDeleteTutor(id);
+      fetchTutores();
+      fetchStats();
+    } catch (error) {
+      console.error("Error permanently deleting tutor:", error);
+    }
   };
 
   return {
-    tutores,
-    filteredTutores,
+    tutores: paginatedTutores,
+    filteredTutores: paginatedTutores,
     paginatedTutores,
     currentPage,
     totalPages,
@@ -105,5 +128,6 @@ export const useTutores = () => {
     deleteTutor,
     restoreTutor,
     permanentlyDeleteTutor,
+    fetchAllForExport,
   };
 };

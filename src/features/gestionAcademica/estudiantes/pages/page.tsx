@@ -42,131 +42,7 @@ import type { Estudiante } from "../types";
 import Main from "../../../../features/main/pages/page";
 import { useTour } from "../../../../shared/hooks/useTour";
 
-// ==========================================
-// Datos dummy para desarrollo
-// ==========================================
-const initialData: Estudiante[] = [
-  {
-    id: 1,
-    nombre: "Carlos",
-    apellido: "Rodríguez",
-    email: "carlos.rodriguez@email.com",
-    telefono: "555-0101",
-    genero: "Masculino",
-    estado: "Activo",
-    carrera: "Informática",
-    semestre: 3,
-    fechaIngreso: "2023-01-15",
-    promedio: 15.5,
-    direccion: "Calle Principal #123",
-    cedula: "12345678",
-  },
-  {
-    id: 2,
-    nombre: "María",
-    apellido: "González",
-    email: "maria.gonzalez@email.com",
-    telefono: "555-0102",
-    genero: "Femenino",
-    estado: "Activo",
-    carrera: "Electrónica",
-    semestre: 2,
-    fechaIngreso: "2023-02-20",
-    promedio: 16.2,
-    direccion: "Avenida Central #456",
-    cedula: "87654321",
-  },
-  {
-    id: 3,
-    nombre: "Luis",
-    apellido: "Martínez",
-    email: "luis.martinez@email.com",
-    telefono: "555-0103",
-    genero: "Masculino",
-    estado: "Inactivo",
-    carrera: "Mecanizado",
-    semestre: 4,
-    fechaIngreso: "2023-03-10",
-    promedio: 14.8,
-    direccion: "Calle Secundaria #789",
-    cedula: "11223344",
-  },
-  {
-    id: 4,
-    nombre: "Ana",
-    apellido: "López",
-    email: "ana.lopez@email.com",
-    telefono: "555-0104",
-    genero: "Femenino",
-    estado: "Activo",
-    carrera: "Automotriz",
-    semestre: 1,
-    fechaIngreso: "2023-04-05",
-    promedio: 17.0,
-    direccion: "Boulevard Norte #101",
-    cedula: "55667788",
-  },
-  {
-    id: 5,
-    nombre: "Roberto",
-    apellido: "Hernández",
-    email: "roberto.hernandez@email.com",
-    telefono: "555-0105",
-    genero: "Masculino",
-    estado: "Suspendido",
-    carrera: "Contabilidad",
-    semestre: 5,
-    fechaIngreso: "2023-05-12",
-    promedio: 12.5,
-    direccion: "Calle del Sol #202",
-    cedula: "99887766",
-  },
-  {
-    id: 6,
-    nombre: "Patricia",
-    apellido: "Sánchez",
-    email: "patricia.sanchez@email.com",
-    telefono: "555-0106",
-    genero: "Femenino",
-    estado: "Activo",
-    carrera: "Confección y Patronaje",
-    semestre: 2,
-    fechaIngreso: "2023-06-18",
-    promedio: 18.2,
-    direccion: "Avenida del Río #303",
-    cedula: "44556677",
-  },
-  {
-    id: 7,
-    nombre: "Jorge",
-    apellido: "Díaz",
-    email: "jorge.diaz@email.com",
-    telefono: "555-0107",
-    genero: "Masculino",
-    estado: "Activo",
-    carrera: "Ebanistería",
-    semestre: 3,
-    fechaIngreso: "2023-07-22",
-    promedio: 15.9,
-    direccion: "Calle de la Madera #404",
-    cedula: "33445566",
-  },
-  {
-    id: 8,
-    nombre: "Laura",
-    apellido: "Torres",
-    email: "laura.torres@email.com",
-    telefono: "555-0108",
-    genero: "Femenino",
-    estado: "Inactivo",
-    carrera: "Electricidad",
-    semestre: 4,
-    fechaIngreso: "2023-08-30",
-    promedio: 16.7,
-    direccion: "Avenida de la Luz #505",
-    cedula: "22334455",
-  },
-];
+// Datos retirados (inicializados desde backend)
 
 export default function EstudiantesPage() {
   const {
@@ -184,7 +60,8 @@ export default function EstudiantesPage() {
     addEstudiante,
     updateEstudiante,
     deleteEstudiante,
-  } = useEstudiantes(initialData);
+    fetchAllForExport,
+  } = useEstudiantes();
 
   useTour('tutorial_estudiantes', [
     { element: '#tour-estudiantes-stats', popover: { title: 'Métricas Rápidas', description: 'Resumen del estado de todos los estudiantes.', side: "bottom" } },
@@ -252,10 +129,11 @@ export default function EstudiantesPage() {
   };
 
   // Export functionality
-  const handleExport = () => {
+  const handleExport = async () => {
+    const dataToExport = await fetchAllForExport();
     const csvContent = [
       ['ID', 'Nombre', 'Apellido', 'Cédula', 'Email', 'Teléfono', 'Carrera', 'Semestre', 'Estado', 'Promedio', 'Fecha Ingreso', 'Dirección'],
-      ...filteredEstudiantes.map(estudiante => [
+      ...dataToExport.map((estudiante: any) => [
         estudiante.id,
         estudiante.nombre,
         estudiante.apellido,

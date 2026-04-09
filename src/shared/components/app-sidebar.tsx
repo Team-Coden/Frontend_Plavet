@@ -91,6 +91,10 @@ const data = {
         {
           title: "Vinculadores",
           url: "/vinculadores",
+        },
+        {
+          title: "Usuarios",
+          url: "/usuarios",
         }
       ],
     },
@@ -102,6 +106,10 @@ const data = {
         {
           title: "Documentos",
           url: "/documentos",
+        },
+        {
+          title: "Mis Documentos",
+          url: "/mis-documentos",
         },
         {
           title: "Subir Documentos",
@@ -117,6 +125,10 @@ const data = {
         {
           title: "Evaluaciones",
           url: "/evaluaciones",
+        },
+        {
+          title: "Mis Calificaciones",
+          url: "/mis-calificaciones",
         },
         {
           title: "Calificaciones",

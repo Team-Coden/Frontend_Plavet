@@ -1,4 +1,4 @@
-export type Genero = "Indistinto" | "Masculino" | "Femenino";
+export type Genero = "Masculino" | "Femenino";
 export type EstadoEstudiante = "Activo" | "Inactivo" | "Suspendido";
 
 export const CARRERAS = [
@@ -15,14 +15,14 @@ export const CARRERAS = [
 export type Carrera = (typeof CARRERAS)[number];
 
 export interface Estudiante {
-  id: number;
+  id: string | number;
   nombre: string;
   apellido: string;
   email: string;
   telefono: string;
   genero: Genero;
   estado: EstadoEstudiante;
-  carrera: Carrera;
+  carrera: Carrera | string;
   semestre: number;
   fechaIngreso: string;
   promedio: number;
@@ -30,7 +30,18 @@ export interface Estudiante {
   cedula: string;
 }
 
-export type CreateEstudianteData = Omit<Estudiante, "id" | "fechaIngreso">;
+export interface CreateEstudianteData {
+  nombre: string;
+  apellido: string;
+  email: string;
+  telefono: string;
+  genero: Genero;
+  direccion: string;
+  cedula: string;
+  fecha_nacimiento: string;
+  id_taller?: number;
+  carrera?: string;
+}
 
 export interface EstudianteStats {
   total: number;

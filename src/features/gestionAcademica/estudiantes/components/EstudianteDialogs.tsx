@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,9 +19,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../../../shared/components/ui/select";
-import { useState } from "react";
-import type { Estudiante, CreateEstudianteData, Genero, EstadoEstudiante, Carrera } from "../types";
-import { CARRERAS } from "../types";
+import type { Estudiante, CreateEstudianteData, Genero, EstadoEstudiante } from "../types";
+import { apiClient } from "../../../../lib/api";
+
+interface TallerOption {
+  id: number;
+  nombre: string;
+}
+
+const useTalleres = () => {
+  const [talleres, setTalleres] = useState<TallerOption[]>([]);
+
+  useEffect(() => {
+    apiClient.get<any>("/api/talleres", { pageSize: 100 })
+      .then(res => setTalleres(res.data || []))
+      .catch(() => {});
+  }, []);
+
+  return talleres;
+};
 
 interface CreateEstudianteDialogProps {
   open: boolean;
@@ -34,49 +50,47 @@ export const CreateEstudianteDialog = ({
   onOpenChange,
   onSubmit,
 }: CreateEstudianteDialogProps) => {
-  const [formData, setFormData] = useState<CreateEstudianteData>({
+  const talleres = useTalleres();
+
+  const emptyForm: CreateEstudianteData = {
     nombre: "",
     apellido: "",
     email: "",
     telefono: "",
-    genero: "Indistinto",
-    estado: "Activo",
-    carrera: "Informática",
-    semestre: 1,
-    promedio: 0,
+    genero: "Masculino",
     direccion: "",
     cedula: "",
-  });
+    fecha_nacimiento: "",
+    id_taller: undefined,
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [formData, setFormData] = useState<CreateEstudianteData>(emptyForm);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
-    setFormData({
-      nombre: "",
-      apellido: "",
-      email: "",
-      telefono: "",
-      genero: "Indistinto",
-      estado: "Activo",
-      carrera: "Informática",
-      semestre: 1,
-      promedio: 0,
-      direccion: "",
-      cedula: "",
-    });
-    onOpenChange(false);
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onSubmit(formData);
+      setFormData(emptyForm);
+      onOpenChange(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Nuevo Estudiante</DialogTitle>
           <DialogDescription>
             Crea un nuevo registro de estudiante en el sistema.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -98,7 +112,7 @@ export const CreateEstudianteDialog = ({
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="cedula">Cédula</Label>
@@ -110,6 +124,19 @@ export const CreateEstudianteDialog = ({
               />
             </div>
             <div>
+              <Label htmlFor="fecha_nacimiento">Fecha de Nacimiento</Label>
+              <Input
+                id="fecha_nacimiento"
+                type="date"
+                value={formData.fecha_nacimiento}
+                onChange={(e) => setFormData({ ...formData, fecha_nacimiento: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -119,9 +146,6 @@ export const CreateEstudianteDialog = ({
                 required
               />
             </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="telefono">Teléfono</Label>
               <Input
@@ -131,18 +155,19 @@ export const CreateEstudianteDialog = ({
                 required
               />
             </div>
-            <div>
-              <Label htmlFor="direccion">Dirección</Label>
-              <Input
-                id="direccion"
-                value={formData.direccion}
-                onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
-                required
-              />
-            </div>
           </div>
-          
-          <div className="grid grid-cols-3 gap-4">
+
+          <div>
+            <Label htmlFor="direccion">Dirección</Label>
+            <Input
+              id="direccion"
+              value={formData.direccion}
+              onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="genero">Género</Label>
               <Select
@@ -153,89 +178,39 @@ export const CreateEstudianteDialog = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Indistinto">Indistinto</SelectItem>
                   <SelectItem value="Masculino">Masculino</SelectItem>
                   <SelectItem value="Femenino">Femenino</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
-              <Label htmlFor="carrera">Carrera</Label>
+              <Label htmlFor="id_taller">Taller</Label>
               <Select
-                value={formData.carrera}
-                onValueChange={(value) => setFormData({ ...formData, carrera: value as Carrera })}
+                value={formData.id_taller?.toString() || ""}
+                onValueChange={(value) => setFormData({ ...formData, id_taller: parseInt(value) })}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Seleccionar taller" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CARRERAS.map((carrera) => (
-                    <SelectItem key={carrera} value={carrera}>
-                      {carrera}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="semestre">Semestre</Label>
-              <Select
-                value={formData.semestre.toString()}
-                onValueChange={(value) => setFormData({ ...formData, semestre: parseInt(value) })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((semestre) => (
-                    <SelectItem key={semestre} value={semestre.toString()}>
-                      {semestre}
+                  {talleres.map((t) => (
+                    <SelectItem key={t.id} value={t.id.toString()}>
+                      {t.nombre}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="promedio">Promedio</Label>
-              <Input
-                id="promedio"
-                type="number"
-                min="0"
-                max="20"
-                step="0.1"
-                value={formData.promedio}
-                onChange={(e) => setFormData({ ...formData, promedio: parseFloat(e.target.value) })}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="estado">Estado</Label>
-              <Select
-                value={formData.estado}
-                onValueChange={(value) => setFormData({ ...formData, estado: value as EstadoEstudiante })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Activo">Activo</SelectItem>
-                  <SelectItem value="Inactivo">Inactivo</SelectItem>
-                  <SelectItem value="Suspendido">Suspendido</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit">Crear Estudiante</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Creando..." : "Crear Estudiante"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -256,6 +231,7 @@ export const EditEstudianteDialog = ({
   estudiante,
   onSubmit,
 }: EditEstudianteDialogProps) => {
+  const talleres = useTalleres();
   const [formData, setFormData] = useState<Estudiante | null>(estudiante);
 
   React.useEffect(() => {
@@ -274,14 +250,14 @@ export const EditEstudianteDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Editar Estudiante</DialogTitle>
           <DialogDescription>
             Modifica la información del estudiante seleccionado.
           </DialogDescription>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -303,7 +279,7 @@ export const EditEstudianteDialog = ({
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="edit-cedula">Cédula</Label>
@@ -325,7 +301,7 @@ export const EditEstudianteDialog = ({
               />
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="edit-telefono">Teléfono</Label>
@@ -346,8 +322,8 @@ export const EditEstudianteDialog = ({
               />
             </div>
           </div>
-          
-          <div className="grid grid-cols-3 gap-4">
+
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="edit-genero">Género</Label>
               <Select
@@ -358,84 +334,52 @@ export const EditEstudianteDialog = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Indistinto">Indistinto</SelectItem>
                   <SelectItem value="Masculino">Masculino</SelectItem>
                   <SelectItem value="Femenino">Femenino</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div>
-              <Label htmlFor="edit-carrera">Carrera</Label>
+              <Label htmlFor="edit-taller">Taller</Label>
               <Select
-                value={formData.carrera}
-                onValueChange={(value) => setFormData({ ...formData, carrera: value as Carrera })}
+                value={formData.carrera as string}
+                onValueChange={(value) => {
+                  const taller = talleres.find(t => t.id.toString() === value);
+                  setFormData({ ...formData, carrera: taller?.nombre || value });
+                }}
               >
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Seleccionar taller" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CARRERAS.map((carrera) => (
-                    <SelectItem key={carrera} value={carrera}>
-                      {carrera}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div>
-              <Label htmlFor="edit-semestre">Semestre</Label>
-              <Select
-                value={formData.semestre.toString()}
-                onValueChange={(value) => setFormData({ ...formData, semestre: parseInt(value) })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((semestre) => (
-                    <SelectItem key={semestre} value={semestre.toString()}>
-                      {semestre}
+                  {talleres.map((t) => (
+                    <SelectItem key={t.id} value={t.id.toString()}>
+                      {t.nombre}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="edit-promedio">Promedio</Label>
-              <Input
-                id="edit-promedio"
-                type="number"
-                min="0"
-                max="20"
-                step="0.1"
-                value={formData.promedio}
-                onChange={(e) => setFormData({ ...formData, promedio: parseFloat(e.target.value) })}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="edit-estado">Estado</Label>
-              <Select
-                value={formData.estado}
-                onValueChange={(value) => setFormData({ ...formData, estado: value as EstadoEstudiante })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Activo">Activo</SelectItem>
-                  <SelectItem value="Inactivo">Inactivo</SelectItem>
-                  <SelectItem value="Suspendido">Suspendido</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
+          <div>
+            <Label htmlFor="edit-estado">Estado</Label>
+            <Select
+              value={formData.estado}
+              onValueChange={(value) => setFormData({ ...formData, estado: value as EstadoEstudiante })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Activo">Activo</SelectItem>
+                <SelectItem value="Inactivo">Inactivo</SelectItem>
+                <SelectItem value="Suspendido">Suspendido</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
@@ -472,7 +416,7 @@ export const ViewEstudianteDialog = ({
             Información completa del estudiante seleccionado
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -484,7 +428,7 @@ export const ViewEstudianteDialog = ({
               <p className="text-base font-semibold">{estudiante.apellido}</p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-500">Cédula</label>
@@ -495,7 +439,7 @@ export const ViewEstudianteDialog = ({
               <p className="text-base">{estudiante.email}</p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-500">Teléfono</label>
@@ -506,35 +450,22 @@ export const ViewEstudianteDialog = ({
               <p className="text-base">{estudiante.direccion}</p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-gray-500">Carrera</label>
+              <label className="text-sm font-medium text-gray-500">Taller</label>
               <p className="text-base">{estudiante.carrera}</p>
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">Semestre</label>
-              <p className="text-base">{estudiante.semestre}</p>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-500">Género</label>
               <p className="text-base">{estudiante.genero}</p>
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">Promedio</label>
-              <p className="text-base font-semibold">{estudiante.promedio.toFixed(1)}</p>
-            </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-500">Estado</label>
-              <div className="mt-1">
-                {getEstadoBadge(estudiante.estado)}
-              </div>
+              <div className="mt-1">{getEstadoBadge(estudiante.estado)}</div>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">Fecha de Ingreso</label>

@@ -1,84 +1,104 @@
 'use client';
 
-import { useState, useMemo } from "react";
-import type { Estudiante, EstudianteStats } from "../types";
+import { useState, useEffect, useCallback } from "react";
+import type { Estudiante, EstudianteStats, CreateEstudianteData } from "../types";
+import { estudiantesService } from "../services/estudiantesService";
+import { apiClient } from "../../../../lib/api";
 
-export const useEstudiantes = (initialData: Estudiante[]) => {
-  const [estudiantes, setEstudiantes] = useState<Estudiante[]>(initialData);
+export const useEstudiantes = () => {
+  const [paginatedEstudiantes, setPaginatedEstudiantes] = useState<Estudiante[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab] = useState<string>("todos");
   const [filterEstado, setFilterEstado] = useState<string>("todos");
-  const [filterCarrera] = useState<string>("todos");
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [stats, setStats] = useState<EstudianteStats>({ total: 0, activos: 0, inactivos: 0, suspendidos: 0 });
   const itemsPerPage = 15;
 
-  const filteredEstudiantes = useMemo(() => {
-    return estudiantes.filter((estudiante) => {
-      const matchesSearch =
-        estudiante.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        estudiante.apellido.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        estudiante.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        estudiante.cedula.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (estudiante.carrera &&
-          estudiante.carrera.toLowerCase().includes(searchTerm.toLowerCase()));
+  const fetchEstudiantes = useCallback(async () => {
+    try {
+      const response = await estudiantesService.getAll({
+        page: currentPage,
+        pageSize: itemsPerPage,
+        search: searchTerm || undefined,
+        estado: filterEstado !== "todos" ? filterEstado : undefined,
+      });
+      if (response.success) {
+        setPaginatedEstudiantes(response.data);
+        setTotalPages(response.pagination?.totalPages || 1);
+      }
+    } catch (error) {
+      console.error("Error fetching estudiantes:", error);
+    }
+  }, [currentPage, searchTerm, filterEstado]);
 
-      const matchesTab =
-        activeTab === "todos" ||
-        estudiante.estado.toLowerCase() === activeTab.toLowerCase();
+  const fetchStats = useCallback(async () => {
+    try {
+      const response = await apiClient.get<any>("/api/estudiantes/stats");
+      if (response.success) {
+        setStats({
+          total: response.data?.total || 0,
+          activos: 0, 
+          inactivos: 0, 
+          suspendidos: 0
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  }, []);
 
-      const matchesFilter =
-        filterEstado === "todos" || estudiante.estado === filterEstado;
+  const fetchAllForExport = useCallback(async () => {
+    try {
+      const response = await estudiantesService.getAll({
+        search: searchTerm || undefined,
+        estado: filterEstado !== "todos" ? filterEstado : undefined,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching all estudiantes:", error);
+      return [];
+    }
+  }, [searchTerm, filterEstado]);
 
-      const matchesCarrera =
-        filterCarrera === "todos" || estudiante.carrera === filterCarrera;
-
-      return matchesSearch && matchesTab && matchesFilter && matchesCarrera;
-    });
-  }, [estudiantes, searchTerm, activeTab, filterEstado, filterCarrera]);
-
-  // Pagination logic
-  const paginatedEstudiantes = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredEstudiantes.slice(startIndex, endIndex);
-  }, [filteredEstudiantes, currentPage]);
-
-  const totalPages = Math.ceil(filteredEstudiantes.length / itemsPerPage);
+  useEffect(() => {
+    fetchEstudiantes();
+    fetchStats();
+  }, [fetchEstudiantes, fetchStats]);
 
   const resetPage = () => {
     setCurrentPage(1);
   };
 
-  const stats = useMemo(
-    (): EstudianteStats => ({
-      total: estudiantes.length,
-      activos: estudiantes.filter((e) => e.estado === "Activo").length,
-      inactivos: estudiantes.filter((e) => e.estado === "Inactivo").length,
-      suspendidos: estudiantes.filter((e) => e.estado === "Suspendido").length,
-    }),
-    [estudiantes]
-  );
-
-  const addEstudiante = (newEstudiante: Omit<Estudiante, "id" | "fechaIngreso">) => {
-    const estudiante: Estudiante = {
-      ...newEstudiante,
-      id: Date.now(),
-      fechaIngreso: new Date().toISOString().split("T")[0],
-    };
-    setEstudiantes([...estudiantes, estudiante]);
+  const addEstudiante = async (newEstudiante: CreateEstudianteData) => {
+    await estudiantesService.create(newEstudiante);
+    fetchEstudiantes();
+    fetchStats();
   };
 
-  const updateEstudiante = (updatedEstudiante: Estudiante) => {
-    setEstudiantes(estudiantes.map((e) => (e.id === updatedEstudiante.id ? updatedEstudiante : e)));
+  const updateEstudiante = async (updatedEstudiante: Estudiante) => {
+    try {
+      await estudiantesService.update(updatedEstudiante.id, updatedEstudiante);
+      fetchEstudiantes();
+    } catch (error) {
+      console.error("Error updating estudiante:", error);
+      alert("Error al actualizar estudiante");
+    }
   };
 
-  const deleteEstudiante = (id: number) => {
-    setEstudiantes(estudiantes.filter((e) => e.id !== id));
+  const deleteEstudiante = async (id: string | number) => {
+    try {
+      await estudiantesService.delete(id);
+      fetchEstudiantes();
+      fetchStats();
+    } catch (error) {
+      console.error("Error deleting estudiante:", error);
+      alert("Error al eliminar estudiante");
+    }
   };
 
   return {
-    estudiantes,
-    filteredEstudiantes,
+    estudiantes: paginatedEstudiantes, // For compatibility with existing length checks if needed
+    filteredEstudiantes: paginatedEstudiantes, // For compatibility
     paginatedEstudiantes,
     currentPage,
     totalPages,
@@ -92,5 +112,6 @@ export const useEstudiantes = (initialData: Estudiante[]) => {
     addEstudiante,
     updateEstudiante,
     deleteEstudiante,
+    fetchAllForExport, // New helper for export
   };
 };

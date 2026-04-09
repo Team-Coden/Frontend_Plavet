@@ -33,6 +33,7 @@ export default function SupervisoresPage() {
     deleteSupervisor,
     restoreSupervisor,
     permanentlyDeleteSupervisor,
+    fetchAllForExport,
   } = useSupervisores();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -77,30 +78,18 @@ export default function SupervisoresPage() {
     restoreSupervisor(supervisor.id);
   };
 
-  const handleExport = () => {
-    const csvContent = [
-      ['ID', 'Nombre', 'Apellido', 'Email', 'Teléfono', 'Centro de Trabajo', 'Estado', 'Fecha Contratación'],
-      ...filteredSupervisores.map(supervisor => [
-        supervisor.id,
-        supervisor.nombre,
-        supervisor.apellido,
-        supervisor.email,
-        supervisor.telefono,
-        supervisor.nombre_centro,
-        supervisor.estado,
-        supervisor.fecha_contratacion
-      ])
-    ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const handleExport = async () => {
+    const csvBlob = await fetchAllForExport();
+    if (!csvBlob) return;
+    
+    const url = URL.createObjectURL(csvBlob);
     const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `supervisores_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
+    link.href = url;
+    link.download = `supervisores_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleSearch = (value: string) => {

@@ -8,7 +8,9 @@ import PlazasPage from '@/features/gestionInstitucional/plazas/pages/page';
 import TutoresPage from '@/features/gestionInstitucional/tutores/pages/page';
 import DocumentosPage from '@/features/documentacion/pages/page';
 import SubirDocumentosPage from '@/features/documentacion/subir/page';
+import MisDocumentosPage from '@/features/documentacion/mis-documentos/page';
 import EvaluacionesPage from '@/features/evaluaciones/pages/page';
+import MisCalificacionesPage from '@/features/evaluaciones/mis-calificaciones/page';
 import CalificacionesPage from '../../features/evaluaciones/calificacion/pages/page';
 import ReportesPage from '@/features/reportes/page';
 import CierrePasantiasPage from '@/features/procesoDePasantias/cierreDePasantias/pages/page';
@@ -21,6 +23,7 @@ import TalleresPage from '@/features/gestionAcademica/talleres/pages/page';
 import SupportPage from '@/features/support/pages/page';
 import FeedbackPage from '@/features/feedback/pages/page';
 import AccountPage from '@/features/account/pages/page';
+import UsuariosPage from '@/features/rolesYpersonal/usuarios/pages/page';
 
 function RoutersProtected() {
   return (
@@ -34,8 +37,10 @@ function RoutersProtected() {
         <Route path="/plaza" element={<PlazasPage/>} />
         <Route path="/tutores" element={<TutoresPage/>} />
         <Route path="/documentos" element={<DocumentosPage/>} />
+        <Route path="/mis-documentos" element={<MisDocumentosPage/>} />
         <Route path="/subir" element={<SubirDocumentosPage/>} />
         <Route path="/evaluaciones" element={<EvaluacionesPage/>} />
+        <Route path="/mis-calificaciones" element={<MisCalificacionesPage/>} />
         <Route path="/calificaciones" element={<CalificacionesPage/>} />
         <Route path="/reportes" element={<ReportesPage/>} />
         <Route path="/gestionDePasantias" element={<GestionPasantiasPage/>} />
@@ -48,6 +53,7 @@ function RoutersProtected() {
         <Route path="/support" element={<SupportPage/>} />
         <Route path="/feedback" element={<FeedbackPage/>} />
         <Route path="/account" element={<AccountPage/>} />
+        <Route path="/usuarios" element={<UsuariosPage/>} />
       
       </Routes>
     </BrowserRouter>
