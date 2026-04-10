@@ -170,10 +170,10 @@ export default function CentroDeTrabajoPage() {
           </div>
 
           {/* Main Content */}
-          <Card className="border mt-8">
+          <Card className="border mt-8 overflow-hidden">
             <CardHeader className="border-b bg-muted/30">
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     id="tour-centros-export"
                     variant="outline"
