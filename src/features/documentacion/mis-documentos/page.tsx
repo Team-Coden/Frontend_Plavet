@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom"
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog"
@@ -311,6 +312,9 @@ export default function MisDocumentosPage() {
                 </Table>
               </div>
             </div>
+            <DialogFooter>
+              <Button onClick={() => setSelectedOwner(null)}>Cerrar</Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
 
@@ -337,6 +341,9 @@ export default function MisDocumentosPage() {
                 )}
               </div>
             </div>
+            <DialogFooter>
+              <Button onClick={closePdfPreview}>Cerrar</Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

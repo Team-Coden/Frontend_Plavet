@@ -4,10 +4,12 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../../../../shared/components/ui/dialog"
 import { Badge } from "../../../../shared/components/ui/badge"
+import { Button } from "../../../../shared/components/ui/button"
 import type { CentroTrabajo } from "../types"
 
 interface ViewCenterDialogProps {
@@ -104,6 +106,9 @@ export function ViewCenterDialog({ open, onOpenChange, centro }: ViewCenterDialo
             </div>
           </div>
         </div>
+        <DialogFooter>
+          <Button onClick={() => onOpenChange(false)}>Cerrar</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

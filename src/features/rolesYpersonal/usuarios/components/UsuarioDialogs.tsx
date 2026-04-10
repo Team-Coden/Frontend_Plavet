@@ -98,6 +98,9 @@ export const ViewUsuarioDialog = ({
             </div>
           )}
         </div>
+        <DialogFooter>
+          <Button onClick={() => onOpenChange(false)}>Cerrar</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

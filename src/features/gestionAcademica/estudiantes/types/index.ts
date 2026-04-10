@@ -25,7 +25,6 @@ export interface Estudiante {
   carrera: Carrera;
   semestre: number;
   fechaIngreso: string;
-  promedio: number;
   direccion: string;
   cedula: string;
 }

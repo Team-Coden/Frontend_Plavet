@@ -43,7 +43,6 @@ export const CreateEstudianteDialog = ({
     estado: "Activo",
     carrera: "Informática",
     semestre: 1,
-    promedio: 0,
     direccion: "",
     cedula: "",
   });
@@ -60,7 +59,6 @@ export const CreateEstudianteDialog = ({
       estado: "Activo",
       carrera: "Informática",
       semestre: 1,
-      promedio: 0,
       direccion: "",
       cedula: "",
     });
@@ -78,8 +76,8 @@ export const CreateEstudianteDialog = ({
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="nombre">Nombre</Label>
               <Input
                 id="nombre"
@@ -88,7 +86,7 @@ export const CreateEstudianteDialog = ({
                 required
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="apellido">Apellido</Label>
               <Input
                 id="apellido"
@@ -99,8 +97,8 @@ export const CreateEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="cedula">Cédula</Label>
               <Input
                 id="cedula"
@@ -109,7 +107,7 @@ export const CreateEstudianteDialog = ({
                 required
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
@@ -121,8 +119,8 @@ export const CreateEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="telefono">Teléfono</Label>
               <Input
                 id="telefono"
@@ -131,7 +129,7 @@ export const CreateEstudianteDialog = ({
                 required
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="direccion">Dirección</Label>
               <Input
                 id="direccion"
@@ -142,8 +140,8 @@ export const CreateEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="genero">Género</Label>
               <Select
                 value={formData.genero}
@@ -159,7 +157,7 @@ export const CreateEstudianteDialog = ({
               </Select>
             </div>
             
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="carrera">Carrera</Label>
               <Select
                 value={formData.carrera}
@@ -178,7 +176,7 @@ export const CreateEstudianteDialog = ({
               </Select>
             </div>
             
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="semestre">Semestre</Label>
               <Select
                 value={formData.semestre.toString()}
@@ -198,21 +196,8 @@ export const CreateEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="promedio">Promedio</Label>
-              <Input
-                id="promedio"
-                type="number"
-                min="0"
-                max="20"
-                step="0.1"
-                value={formData.promedio}
-                onChange={(e) => setFormData({ ...formData, promedio: parseFloat(e.target.value) })}
-                required
-              />
-            </div>
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="estado">Estado</Label>
               <Select
                 value={formData.estado}
@@ -282,8 +267,8 @@ export const EditEstudianteDialog = ({
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="edit-nombre">Nombre</Label>
               <Input
                 id="edit-nombre"
@@ -292,7 +277,7 @@ export const EditEstudianteDialog = ({
                 required
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="edit-apellido">Apellido</Label>
               <Input
                 id="edit-apellido"
@@ -303,8 +288,8 @@ export const EditEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="edit-cedula">Cédula</Label>
               <Input
                 id="edit-cedula"
@@ -313,7 +298,7 @@ export const EditEstudianteDialog = ({
                 required
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="edit-email">Email</Label>
               <Input
                 id="edit-email"
@@ -325,8 +310,8 @@ export const EditEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="edit-telefono">Teléfono</Label>
               <Input
                 id="edit-telefono"
@@ -335,7 +320,7 @@ export const EditEstudianteDialog = ({
                 required
               />
             </div>
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="edit-direccion">Dirección</Label>
               <Input
                 id="edit-direccion"
@@ -346,8 +331,8 @@ export const EditEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-3 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="edit-genero">Género</Label>
               <Select
                 value={formData.genero}
@@ -363,7 +348,7 @@ export const EditEstudianteDialog = ({
               </Select>
             </div>
             
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="edit-carrera">Carrera</Label>
               <Select
                 value={formData.carrera}
@@ -382,7 +367,7 @@ export const EditEstudianteDialog = ({
               </Select>
             </div>
             
-            <div>
+            <div className="space-y-2">
               <Label htmlFor="edit-semestre">Semestre</Label>
               <Select
                 value={formData.semestre.toString()}
@@ -402,21 +387,8 @@ export const EditEstudianteDialog = ({
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="edit-promedio">Promedio</Label>
-              <Input
-                id="edit-promedio"
-                type="number"
-                min="0"
-                max="20"
-                step="0.1"
-                value={formData.promedio}
-                onChange={(e) => setFormData({ ...formData, promedio: parseFloat(e.target.value) })}
-                required
-              />
-            </div>
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="edit-estado">Estado</Label>
               <Select
                 value={formData.estado}
@@ -490,7 +462,7 @@ export const ViewEstudianteDialog = ({
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">Email</label>
-              <p className="text-base">{estudiante.email}</p>
+              <p className="text-base break-all">{estudiante.email}</p>
             </div>
           </div>
           
@@ -521,10 +493,6 @@ export const ViewEstudianteDialog = ({
               <label className="text-sm font-medium text-gray-500">Género</label>
               <p className="text-base">{estudiante.genero}</p>
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">Promedio</label>
-              <p className="text-base font-semibold">{estudiante.promedio.toFixed(1)}</p>
-            </div>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
@@ -540,6 +508,9 @@ export const ViewEstudianteDialog = ({
             </div>
           </div>
         </div>
+        <DialogFooter>
+          <Button onClick={() => onOpenChange(false)}>Cerrar</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

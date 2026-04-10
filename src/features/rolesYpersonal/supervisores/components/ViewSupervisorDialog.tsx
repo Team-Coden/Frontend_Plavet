@@ -2,10 +2,12 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../../../../shared/components/ui/dialog";
 import { Badge } from "../../../../shared/components/ui/badge";
+import { Button } from "../../../../shared/components/ui/button";
 import type { Supervisor } from "../types";
 
 interface ViewSupervisorDialogProps {
@@ -87,6 +89,9 @@ export function ViewSupervisorDialog({
             </div>
           )}
         </div>
+        <DialogFooter>
+          <Button onClick={() => onOpenChange(false)}>Cerrar</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -240,13 +240,7 @@ export const ViewPlazaDialog = ({
           />
         </div>
         <DialogFooter>
-          <Button
-            variant="outline"
-            className="w-full sm:w-auto bg-transparent"
-            onClick={() => onOpenChange(false)}
-          >
-            Cerrar
-          </Button>
+          <Button onClick={() => onOpenChange(false)}>Cerrar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

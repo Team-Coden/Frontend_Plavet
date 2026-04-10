@@ -4,10 +4,12 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "../../../../shared/components/ui/dialog"
 import { Badge } from "../../../../shared/components/ui/badge"
+import { Button } from "../../../../shared/components/ui/button"
 import { Card, CardContent, CardHeader } from "../../../../shared/components/ui/card"
 import {
   Mail,
@@ -162,6 +164,9 @@ export function ViewTutorDialog({ open, onOpenChange, tutor }: ViewTutorDialogPr
             </Card>
           )}
         </div>
+        <DialogFooter className="mt-4">
+          <Button onClick={() => onOpenChange(false)}>Cerrar</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

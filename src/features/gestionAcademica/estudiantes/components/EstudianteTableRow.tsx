@@ -55,7 +55,6 @@ export const EstudianteTableRow = ({
       <TableCell>{estudiante.carrera}</TableCell>
       <TableCell className="text-center">{estudiante.semestre}</TableCell>
       <TableCell>{getEstadoBadge(estudiante.estado)}</TableCell>
-      <TableCell className="text-center">{estudiante.promedio.toFixed(1)}</TableCell>
       <TableCell>{estudiante.fechaIngreso}</TableCell>
       <TableCell className="text-right">
         <DropdownMenu>

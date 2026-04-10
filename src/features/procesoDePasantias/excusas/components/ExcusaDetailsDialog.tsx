@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../../../shared/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../../../shared/components/ui/dialog";
 import { Badge } from "../../../../shared/components/ui/badge";
 import { Button } from "../../../../shared/components/ui/button";
 import { Input } from "../../../../shared/components/ui/input";
@@ -353,6 +353,11 @@ export const ExcusaDetailsDialog = ({ open, onOpenChange, excuse, onDownload, on
             </>
           )}
         </div>
+        {!isEditMode && (
+          <DialogFooter>
+            <Button onClick={() => onOpenChange(false)}>Cerrar</Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

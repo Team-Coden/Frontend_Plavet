@@ -57,7 +57,6 @@ const initialData: Estudiante[] = [
     carrera: "Informática",
     semestre: 3,
     fechaIngreso: "2023-01-15",
-    promedio: 15.5,
     direccion: "Calle Principal #123",
     cedula: "12345678",
   },
@@ -72,7 +71,6 @@ const initialData: Estudiante[] = [
     carrera: "Electrónica",
     semestre: 2,
     fechaIngreso: "2023-02-20",
-    promedio: 16.2,
     direccion: "Avenida Central #456",
     cedula: "87654321",
   },
@@ -87,7 +85,6 @@ const initialData: Estudiante[] = [
     carrera: "Mecanizado",
     semestre: 4,
     fechaIngreso: "2023-03-10",
-    promedio: 14.8,
     direccion: "Calle Secundaria #789",
     cedula: "11223344",
   },
@@ -102,7 +99,6 @@ const initialData: Estudiante[] = [
     carrera: "Automotriz",
     semestre: 1,
     fechaIngreso: "2023-04-05",
-    promedio: 17.0,
     direccion: "Boulevard Norte #101",
     cedula: "55667788",
   },
@@ -117,7 +113,6 @@ const initialData: Estudiante[] = [
     carrera: "Contabilidad",
     semestre: 5,
     fechaIngreso: "2023-05-12",
-    promedio: 12.5,
     direccion: "Calle del Sol #202",
     cedula: "99887766",
   },
@@ -132,7 +127,6 @@ const initialData: Estudiante[] = [
     carrera: "Confección y Patronaje",
     semestre: 2,
     fechaIngreso: "2023-06-18",
-    promedio: 18.2,
     direccion: "Avenida del Río #303",
     cedula: "44556677",
   },
@@ -147,7 +141,6 @@ const initialData: Estudiante[] = [
     carrera: "Ebanistería",
     semestre: 3,
     fechaIngreso: "2023-07-22",
-    promedio: 15.9,
     direccion: "Calle de la Madera #404",
     cedula: "33445566",
   },
@@ -162,7 +155,6 @@ const initialData: Estudiante[] = [
     carrera: "Electricidad",
     semestre: 4,
     fechaIngreso: "2023-08-30",
-    promedio: 16.7,
     direccion: "Avenida de la Luz #505",
     cedula: "22334455",
   },
@@ -254,7 +246,7 @@ export default function EstudiantesPage() {
   // Export functionality
   const handleExport = () => {
     const csvContent = [
-      ['ID', 'Nombre', 'Apellido', 'Cédula', 'Email', 'Teléfono', 'Carrera', 'Semestre', 'Estado', 'Promedio', 'Fecha Ingreso', 'Dirección'],
+      ['ID', 'Nombre', 'Apellido', 'Cédula', 'Email', 'Teléfono', 'Carrera', 'Semestre', 'Estado', 'Fecha Ingreso', 'Dirección'],
       ...filteredEstudiantes.map(estudiante => [
         estudiante.id,
         estudiante.nombre,
@@ -265,7 +257,6 @@ export default function EstudiantesPage() {
         estudiante.carrera,
         estudiante.semestre,
         estudiante.estado,
-        estudiante.promedio,
         estudiante.fechaIngreso,
         estudiante.direccion
       ])
@@ -388,7 +379,6 @@ export default function EstudiantesPage() {
                           <TableHead className="font-semibold">Carrera</TableHead>
                           <TableHead className="font-semibold text-center">Semestre</TableHead>
                           <TableHead className="font-semibold">Estado</TableHead>
-                          <TableHead className="font-semibold text-center">Promedio</TableHead>
                           <TableHead className="font-semibold">Fecha Ingreso</TableHead>
                           <TableHead className="font-semibold text-right">Acciones</TableHead>
                         </TableRow>
